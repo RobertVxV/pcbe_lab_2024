@@ -1,13 +1,5 @@
-###This repository will be used for the PCBE Project.
+### This repository will be used for the PCBE Project.
 
-### Team Members
-1. Vinitchi Robert-Valentin
-2. Ungur Viktor
-3. Copilu Tudor
-4. Dobra Denisa-Loredana
-5. Cristea Alexandra
-
-##Tema
 ### Jocul vietii
 
 Simulati o populatie de celule vii ce au fiecare ca scop hranirea si inmultirea.
@@ -27,5 +19,9 @@ In simulare, celulele vor fi reprezentate de fire de executie distincte.
 - incrementarea/decrementarea unitatilor de hrana comune
 - respectarea limitei de N fire de executie
 
-
-
+### Team Members
+1. Vinitchi Robert-Valentin
+2. Ungur Viktor
+3. Copilu Tudor
+4. Dobra Denisa-Loredana
+5. Cristea Alexandra
