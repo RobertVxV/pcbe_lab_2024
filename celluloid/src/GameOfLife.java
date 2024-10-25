@@ -9,7 +9,7 @@ class FoodPool {
         this.totalFood = initialFood;
     }
 
-    public synchronized int consumeFood(int amount) {
+    public synchronized int consumeFood(int amount) { // use semaphores
         if (totalFood >= amount) {
             totalFood -= amount;
             return amount;
@@ -22,7 +22,7 @@ class FoodPool {
 
     public synchronized void addFood(int amount) {
         totalFood += amount;
-    }
+    } //use semaphores
 
     public synchronized int getTotalFood() {
         return totalFood;
@@ -30,6 +30,9 @@ class FoodPool {
 }
 
 abstract class Cell extends Thread {
+    /*
+    these info should be gathered from a config file
+    */
     protected static final int T_FULL = 5000;
     protected static final int T_STARVE = 3000;
     protected static final int REPRODUCTION_THRESHOLD = 10;
@@ -85,12 +88,17 @@ abstract class Cell extends Thread {
     }
 
     protected void die() {
-        alive = false;
+        alive = false; //add an event that ends the tread
         System.out.println(this.getName() + " has died.");
         Random rand = new Random();
         int foodToAdd = rand.nextInt(5) + 1;
         foodPool.addFood(foodToAdd);
         System.out.println(this.getName() + " died and added " + foodToAdd + " food to the pool.");
+    }
+
+    protected void kill()
+    {
+        alive = false; //add an event that ends  the thread
     }
 }
 
@@ -102,8 +110,11 @@ class AsexualCell extends Cell {
     @Override
     public void reproduce() {
         System.out.println(this.getName() + " is reproducing asexually.");
-        AsexualCell child = new AsexualCell(foodPool);
-        child.start();
+        this.kill();
+        AsexualCell child1 = new AsexualCell(foodPool);
+        AsexualCell child2 = new AsexualCell(foodPool);
+        child1.start();
+        child2.start();
     }
 }
 
