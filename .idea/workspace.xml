@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="3a61abe7-f048-464b-abab-34eca0038ae0" name="Changes" comment="code updates + prof comments">
+    <list default="true" id="3a61abe7-f048-464b-abab-34eca0038ae0" name="Changes" comment="semaphores + comments">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/celluloid/src/GameOfLife.java" beforeDir="false" afterPath="$PROJECT_DIR$/celluloid/src/GameOfLife.java" afterDir="false" />
     </list>
@@ -74,7 +74,7 @@
       <updated>1729611250804</updated>
       <workItem from="1729611256742" duration="51000" />
       <workItem from="1729845819502" duration="907000" />
-      <workItem from="1730220755444" duration="110000" />
+      <workItem from="1730220755444" duration="441000" />
     </task>
     <task id="LOCAL-00001" summary="git commit -m &quot;code updates + prof comments&quot;">
       <option name="closed" value="true" />
@@ -84,14 +84,42 @@
       <option name="project" value="LOCAL" />
       <updated>1729846496014</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="semaphores + comments">
+      <option name="closed" value="true" />
+      <created>1730220923519</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1730220923519</updated>
+    </task>
+    <task id="LOCAL-00003" summary="semaphores + comments">
+      <option name="closed" value="true" />
+      <created>1730220955294</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1730220955294</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
   </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="git commit -m &quot;code updates + prof comments&quot;" />
-    <option name="LAST_COMMIT_MESSAGE" value="git commit -m &quot;code updates + prof comments&quot;" />
+    <MESSAGE value="semaphores + comments" />
+    <option name="LAST_COMMIT_MESSAGE" value="semaphores + comments" />
   </component>
 </project>
