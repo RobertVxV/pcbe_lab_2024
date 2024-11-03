@@ -180,56 +180,83 @@ class AsexualCell extends Cell {
     }
 }
 
-class SexualCell extends Cell {
-    private List<SexualCell> partners = new ArrayList<>();
+class Cupid extends Thread {
+    private final List<SexualCell> waitingCells = new ArrayList<>();
 
-    public SexualCell(FoodPool foodPool, Watcher watcher) {
-        super(foodPool, watcher);
+    public void registerCell(SexualCell cell) {
+        synchronized (waitingCells) {
+            waitingCells.add(cell);
+            waitingCells.notifyAll(); // notify any waiting cells
+        }
     }
 
-    public void findPartner(SexualCell partner) {
-        synchronized (this) {
-            partners.add(partner);
-            notifyAll();
+    public void run() {
+        while (true) {
+            synchronized (waitingCells) {
+                // if there are enough cells to pair
+                while (waitingCells.size() < 2) {
+                    try {
+                        waitingCells.wait(); // wait for cells to register
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                    }
+                }
+                // take a pair of cells to reproduce
+                SexualCell cell1 = waitingCells.remove(0);
+                SexualCell cell2 = waitingCells.remove(0);
+                cell1.makeChild(cell2);
+            }
         }
+    }
+}
+
+class SexualCell extends Cell {
+    private boolean isSeekingPartner = false;
+    private Cupid cupid;
+
+    public SexualCell(FoodPool foodPool, Watcher watcher, Cupid cupid) {
+        super(foodPool, watcher);
+        this.cupid = cupid;
     }
 
     @Override
     public synchronized void reproduce() {
-        if (partners.isEmpty()) {
-            System.out.println(this.getName() + " is waiting for a partner to reproduce.");
-            try {
-                wait(); // Wait for a partner
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-            }
-        } else {
-            SexualCell partner = partners.remove(0);
-            System.out.println(this.getName() + " is reproducing with " + partner.getName());
-            SexualCell child = new SexualCell(foodPool, watcher);
+        if (!isSeekingPartner) {
+            System.out.println(this.getName() + " is seeking a partner to reproduce.");
+            isSeekingPartner = true;
+            cupid.registerCell(this); // register with Cupid
+        }
+    }
+
+    public synchronized void makeChild(SexualCell partner) {
+        if (partner != null) {
+            System.out.println(this.getName() + " found a partner: " + partner.getName());
+            SexualCell child = new SexualCell(foodPool, watcher, cupid);
             child.start();
         }
     }
 }
 
-public class GameOfLife {
+
+public class Celluloid {
     public static void main(String[] args) {
-        int initialFood = 100;
+        int initialFood = 3;
         FoodPool foodPool = new FoodPool(initialFood);
         Watcher watcher = new Watcher(foodPool);
         watcher.start();
+        Cupid cupid = new Cupid();
+        cupid.start();
 
         // Create some initial cells
         AsexualCell asexualCell1 = new AsexualCell(foodPool, watcher);
-        SexualCell sexualCell1 = new SexualCell(foodPool, watcher);
-        SexualCell sexualCell2 = new SexualCell(foodPool, watcher);
+        SexualCell sexualCell1 = new SexualCell(foodPool, watcher, cupid);
+        SexualCell sexualCell2 = new SexualCell(foodPool, watcher, cupid);
+        SexualCell sexualCell3 = new SexualCell(foodPool, watcher, cupid);
 
         // Start the simulation
         asexualCell1.start();
         sexualCell1.start();
         sexualCell2.start();
-
-        // Allow sexual cells to find partners
-        sexualCell1.findPartner(sexualCell2);
+        sexualCell3.start();
     }
 }
