@@ -212,7 +212,7 @@ class SexualCell extends Cell {
     }
 }
 
-public class Celluloid {
+public class GameOfLife {
     public static void main(String[] args) {
         int initialFood = 100;
         FoodPool foodPool = new FoodPool(initialFood);
