@@ -3,19 +3,18 @@ import java.util.List;
 import java.util.Random;
 import java.util.concurrent.Semaphore;
 
-class FoodPool {
+class FoodPool { // the place where cells live, and the place where the food is
     private int totalFood;
     private final Semaphore semaphore;
 
     public FoodPool(int initialFood) {
         this.totalFood = initialFood;
-        this.semaphore = new Semaphore(1);
+        this.semaphore = new Semaphore(1); // using semaphores
     }
 
-    public int consumeFood(int amount) { // semafoare
+    public int consumeFood(int amount) { // one cell at a time consumes food from the pool
         int foodConsumed = 0;
-        try
-        {
+        try {
             semaphore.acquire();
             if (totalFood >= amount) {
                 foodConsumed = amount;
@@ -24,68 +23,79 @@ class FoodPool {
                 foodConsumed = totalFood;
                 totalFood = 0;
             }
-        }
-        catch(InterruptedException e)
-        {
+        } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
-        }
-        finally
-        {
+        } finally {
             semaphore.release();
         }
 
         return foodConsumed;
     }
 
-    public void addFood(int amount) {
-        try
-        {
+    public void addFood(int amount) { // one cell at the time adds food to the pool
+        try {
             semaphore.acquire();
             totalFood += amount;
-        }
-        catch (InterruptedException e)
-        {
+        } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
-        }
-        finally
-        {
+        } finally {
             semaphore.release();
         }
     }
 
-    public synchronized int getTotalFood() {
+    public int getTotalFood() {
         int food;
-        try
-        {
+        try {
             semaphore.acquire();
             food = totalFood;
-        }
-        catch (InterruptedException e)
-        {
+        } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             food = 0;
-        }
-        finally
-        {
+        } finally {
             semaphore.release();
         }
         return food;
     }
 }
 
+class Watcher extends Thread {
+    private final FoodPool foodPool;
+
+    public Watcher(FoodPool foodPool) { // a watcher, "God" is added to the pool
+        this.foodPool = foodPool;
+    }
+
+    @Override
+    public void run() {
+        while (true) {
+            try {
+                Thread.sleep(50); // short interval to check food status
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+            synchronized (this) {
+                if (foodPool.getTotalFood() > 0) {
+                    notifyAll(); // notify cells if food is available
+                }
+            }
+        }
+    }
+}
+
 abstract class Cell extends Thread {
-    protected static final int T_FULL = 4000; // Time a cell stays full
-    protected static final int T_STARVE = 2000; // Time a cell can starve
-    protected static final int T_STARVE_VARIANCE = 1000;
-    protected static final int REPRODUCTION_THRESHOLD = 10; // store in json
+    protected static final int T_FULL = 3000;
+    protected static final int T_STARVE = 2000;
+    protected static final int T_FULL_VARIANCE = 1000;
+    protected static final int REPRODUCTION_THRESHOLD = 10;
 
     protected FoodPool foodPool;
     protected int mealsEaten = 0;
     protected boolean alive = true;
-    protected boolean hungry = true;
+    protected final Watcher watcher;
 
-    public Cell(FoodPool foodPool) {
+    public Cell(FoodPool foodPool, Watcher watcher) { // a cell its added to the food pool and it has its watcher
         this.foodPool = foodPool;
+        this.watcher = watcher;
     }
 
     public abstract void reproduce();
@@ -93,42 +103,50 @@ abstract class Cell extends Thread {
     @Override
     public void run() {
         while (alive) {
-            if (hungry) {
-                int food = foodPool.consumeFood(1);
-                if (food > 0) {
-                    eat(food);
-                } else {
-                    Random rand = new Random();
-                    int starvationTime = T_STARVE + rand.nextInt(T_STARVE_VARIANCE);
-                    try {
-                        Thread.sleep(starvationTime); // Starvation time
-                        if (hungry) {
-                            die();
-                        }
-                    } catch (InterruptedException e) {
-                        Thread.currentThread().interrupt();
-                    }
-                }
+            if (attemptToEat()) {
+                remainFull(); // if a cell eats, it stays full
+            } else {
+                die(); // if not the cell dies
             }
         }
     }
 
-    private void eat(int food) {
-        mealsEaten++;
-        hungry = false;
-        System.out.println(this.getName() + " ate food. Total meals: " + mealsEaten);
+    private boolean attemptToEat() {
+        long startWait = System.currentTimeMillis();
+        boolean ateFood = false;
 
+        while (System.currentTimeMillis() - startWait < T_STARVE && !ateFood) { // loop until cell either starves or eats
+            // eating logic
+            int food = foodPool.consumeFood(1);
+            if (food > 0) {
+                mealsEaten++;
+                ateFood = true;
+                System.out.println(this.getName() + " ate food. Total meals: " + mealsEaten);
+                if (mealsEaten >= REPRODUCTION_THRESHOLD) {
+                    reproduce();
+                }
+            } else {
+                // wait on watcher to notify
+                try {
+                    synchronized (watcher) {
+                        watcher.wait(100);
+                    }
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                }
+            }
+        }
+        return ateFood;
+    }
+
+    private void remainFull() {
+        Random rand = new Random();
+        int fullTime = T_FULL + rand.nextInt(T_FULL_VARIANCE);
         try {
-            Thread.sleep(T_FULL); // Stay full for some time
+            Thread.sleep(fullTime); // cell remain full and does nothing
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
-
-        if (mealsEaten >= REPRODUCTION_THRESHOLD) {
-            reproduce();
-        }
-
-        hungry = true; // Become hungry again
     }
 
     protected void die() {
@@ -140,23 +158,23 @@ abstract class Cell extends Thread {
         System.out.println(this.getName() + " died and added " + foodToAdd + " food to the pool.");
     }
 
-    protected void kill() // add an event that ends the thread
-    {
+    protected void kill() {
         alive = false;
     }
 }
 
+
 class AsexualCell extends Cell {
-    public AsexualCell(FoodPool foodPool) {
-        super(foodPool);
+    public AsexualCell(FoodPool foodPool, Watcher watcher) {
+        super(foodPool, watcher);
     }
 
     @Override
     public void reproduce() {
         System.out.println(this.getName() + " is reproducing asexually.");
         this.kill();
-        AsexualCell child1 = new AsexualCell(foodPool);
-        AsexualCell child2 = new AsexualCell(foodPool);
+        AsexualCell child1 = new AsexualCell(foodPool, watcher);
+        AsexualCell child2 = new AsexualCell(foodPool, watcher);
         child1.start();
         child2.start();
     }
@@ -165,8 +183,8 @@ class AsexualCell extends Cell {
 class SexualCell extends Cell {
     private List<SexualCell> partners = new ArrayList<>();
 
-    public SexualCell(FoodPool foodPool) {
-        super(foodPool);
+    public SexualCell(FoodPool foodPool, Watcher watcher) {
+        super(foodPool, watcher);
     }
 
     public void findPartner(SexualCell partner) {
@@ -188,21 +206,23 @@ class SexualCell extends Cell {
         } else {
             SexualCell partner = partners.remove(0);
             System.out.println(this.getName() + " is reproducing with " + partner.getName());
-            SexualCell child = new SexualCell(foodPool);
+            SexualCell child = new SexualCell(foodPool, watcher);
             child.start();
         }
     }
 }
 
-public class GameOfLife {
+public class Celluloid {
     public static void main(String[] args) {
-        int initialFood = 3;
+        int initialFood = 100;
         FoodPool foodPool = new FoodPool(initialFood);
+        Watcher watcher = new Watcher(foodPool);
+        watcher.start();
 
         // Create some initial cells
-        AsexualCell asexualCell1 = new AsexualCell(foodPool);
-        SexualCell sexualCell1 = new SexualCell(foodPool);
-        SexualCell sexualCell2 = new SexualCell(foodPool);
+        AsexualCell asexualCell1 = new AsexualCell(foodPool, watcher);
+        SexualCell sexualCell1 = new SexualCell(foodPool, watcher);
+        SexualCell sexualCell2 = new SexualCell(foodPool, watcher);
 
         // Start the simulation
         asexualCell1.start();
