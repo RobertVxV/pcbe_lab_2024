@@ -41,7 +41,7 @@ abstract class Cell extends Thread {
             if (food > 0) {
                 mealsEaten++;
                 ateFood = true;
-                System.out.println(this.getName() + " ate food. Total meals: " + mealsEaten + " " + this.T_FULL);
+                System.out.println(this.getName() + " ate food. Total meals: " + mealsEaten);
                 if (mealsEaten >= REPRODUCTION_THRESHOLD) {
                     reproduce();
                 }
