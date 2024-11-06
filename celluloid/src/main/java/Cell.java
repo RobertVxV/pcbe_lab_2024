@@ -1,10 +1,12 @@
 import java.util.Random;
 
 abstract class Cell extends Thread {
-    protected static final int T_FULL = 3000;
-    protected static final int T_STARVE = 2000;
-    protected static final int T_FULL_VARIANCE = 1000;
-    protected static final int REPRODUCTION_THRESHOLD = 10;
+    protected static final Config config = ConfigLoader.getConfig();
+
+    protected static final int T_FULL = config.T_FULL;
+    protected static final int T_STARVE = config.T_STARVE;
+    protected static final int T_FULL_VARIANCE = config.T_FULL_VARIANCE;
+    protected static final int REPRODUCTION_THRESHOLD = config.REPRODUCTION_THRESHOLD;
 
     protected FoodPool foodPool;
     protected int mealsEaten = 0;
@@ -39,7 +41,7 @@ abstract class Cell extends Thread {
             if (food > 0) {
                 mealsEaten++;
                 ateFood = true;
-                System.out.println(this.getName() + " ate food. Total meals: " + mealsEaten);
+                System.out.println(this.getName() + " ate food. Total meals: " + mealsEaten + " " + this.T_FULL);
                 if (mealsEaten >= REPRODUCTION_THRESHOLD) {
                     reproduce();
                 }
