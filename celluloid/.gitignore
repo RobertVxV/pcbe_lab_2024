@@ -24,7 +24,6 @@ bin/
 
 ### VS Code ###
 .vscode/
-/.idea/
 /lib/
 
 ### Mac OS ###
