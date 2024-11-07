@@ -26,7 +26,8 @@ abstract class Cell extends Thread {
             if (attemptToEat()) {
                 remainFull(); // if a cell eats, it stays full
             } else {
-                die(); // if not the cell dies
+                this.die(); // if not the cell dies
+                watcher.notifyCellDeath(this); //notifyAll a cell has died
             }
         }
     }
@@ -72,13 +73,5 @@ abstract class Cell extends Thread {
     protected void die() {
         alive = false;
         System.out.println(this.getName() + " has died.");
-        Random rand = new Random();
-        int foodToAdd = rand.nextInt(5) + 1;
-        foodPool.addFood(foodToAdd);
-        System.out.println(this.getName() + " died and added " + foodToAdd + " food to the pool.");
-    }
-
-    protected void kill() {
-        alive = false;
     }
 }
