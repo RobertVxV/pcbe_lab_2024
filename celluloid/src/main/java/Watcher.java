@@ -1,7 +1,9 @@
+import java.util.Random;
+
 class Watcher extends Thread {
     private final FoodPool foodPool;
 
-    public Watcher(FoodPool foodPool) { // a watcher, "God" is added to the pool
+    public Watcher(FoodPool foodPool) {
         this.foodPool = foodPool;
     }
 
@@ -19,5 +21,13 @@ class Watcher extends Thread {
                 }
             }
         }
+    }
+
+    public void notifyCellDeath(Cell cell) {
+        System.out.println(cell.getName() + " has died and food has been added to the pool.");
+        Random rand = new Random();
+        int foodToAdd = rand.nextInt(5) + 1;
+        foodPool.addFood(foodToAdd);
+        System.out.println(cell.getName() + " added " + foodToAdd + " food to the pool.");
     }
 }
