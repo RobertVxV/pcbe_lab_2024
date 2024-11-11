@@ -1,15 +1,15 @@
+package com.celluloid;
+
+import org.springframework.stereotype.Service;
+
 import java.util.concurrent.Semaphore;
 
-class FoodPool { // the place where cells live, and the place where the food is
-    private int totalFood;
-    private final Semaphore semaphore;
+@Service
+public class FoodPool {
+    private int totalFood = 100; // Initial amount, configurable later
+    private final Semaphore semaphore = new Semaphore(1);
 
-    public FoodPool(int initialFood) {
-        this.totalFood = initialFood;
-        this.semaphore = new Semaphore(1); // using semaphores
-    }
-
-    public int consumeFood(int amount) { // one cell at a time consumes food from the pool
+    public int consumeFood(int amount) {
         int foodConsumed = 0;
         try {
             semaphore.acquire();
@@ -25,11 +25,10 @@ class FoodPool { // the place where cells live, and the place where the food is
         } finally {
             semaphore.release();
         }
-
         return foodConsumed;
     }
 
-    public void addFood(int amount) { // one cell at the time adds food to the pool
+    public void addFood(int amount) {
         try {
             semaphore.acquire();
             totalFood += amount;
@@ -41,13 +40,12 @@ class FoodPool { // the place where cells live, and the place where the food is
     }
 
     public int getTotalFood() {
-        int food;
+        int food = 0;
         try {
             semaphore.acquire();
             food = totalFood;
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
-            food = 0;
         } finally {
             semaphore.release();
         }

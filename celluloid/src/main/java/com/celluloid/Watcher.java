@@ -1,6 +1,10 @@
+package com.celluloid;
+
+import org.springframework.stereotype.Service;
 import java.util.Random;
 
-class Watcher extends Thread {
+@Service
+public class Watcher extends Thread {
     private final FoodPool foodPool;
 
     public Watcher(FoodPool foodPool) {
@@ -11,13 +15,13 @@ class Watcher extends Thread {
     public void run() {
         while (true) {
             try {
-                Thread.sleep(50); // short interval to check food status
+                Thread.sleep(50); // Check food status at intervals
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
             }
             synchronized (this) {
                 if (foodPool.getTotalFood() > 0) {
-                    notifyAll(); // notify cells if food is available
+                    notifyAll(); // Notify cells if food is available
                 }
             }
         }

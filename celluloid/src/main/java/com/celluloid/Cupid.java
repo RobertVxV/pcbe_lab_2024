@@ -1,28 +1,32 @@
-import java.util.ArrayList;
-import java.util.List;
+package com.celluloid;
 
-class Cupid extends Thread {
-    private final List<SexualCell> waitingCells = new ArrayList<>();
+import org.springframework.stereotype.Service;
+
+import java.util.LinkedList;
+
+@Service
+public class Cupid extends Thread {
+    private final LinkedList<SexualCell> waitingCells = new LinkedList<>();
 
     public void registerCell(SexualCell cell) {
         synchronized (waitingCells) {
             waitingCells.add(cell);
-            waitingCells.notifyAll(); // notify any waiting cells
+            waitingCells.notifyAll(); // Notify any waiting cells
         }
     }
 
+    @Override
     public void run() {
         while (true) {
             synchronized (waitingCells) {
-                // if there are enough cells to pair
                 while (waitingCells.size() < 2) {
                     try {
-                        waitingCells.wait(); // wait for cells to register
+                        waitingCells.wait(); // Wait for cells to register
                     } catch (InterruptedException e) {
                         Thread.currentThread().interrupt();
                     }
                 }
-                // take a pair of cells to reproduce
+                // Pair cells for reproduction
                 SexualCell cell1 = waitingCells.removeFirst();
                 SexualCell cell2 = waitingCells.removeFirst();
                 cell1.makeChild(cell2);

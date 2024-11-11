@@ -1,21 +1,20 @@
-import java.util.Random;
+package com.celluloid;
 
-abstract class Cell extends Thread {
-    protected static final Config config = ConfigLoader.getConfig();
+import org.springframework.beans.factory.annotation.Autowired;
 
-    protected static final int T_FULL = config.T_FULL;
-    protected static final int T_STARVE = config.T_STARVE;
-    protected static final int T_FULL_VARIANCE = config.T_FULL_VARIANCE;
-    protected static final int REPRODUCTION_THRESHOLD = config.REPRODUCTION_THRESHOLD;
+public abstract class Cell extends Thread {
+    protected final FoodPool foodPool;
+    protected final Watcher watcher;
+    protected final Config config;
 
-    protected FoodPool foodPool;
     protected int mealsEaten = 0;
     protected boolean alive = true;
-    protected final Watcher watcher;
 
-    public Cell(FoodPool foodPool, Watcher watcher) { // a cell its added to the food pool and it has its watcher
+    @Autowired
+    public Cell(FoodPool foodPool, Watcher watcher, Config config) {
         this.foodPool = foodPool;
         this.watcher = watcher;
+        this.config = config;
     }
 
     public abstract void reproduce();
@@ -24,10 +23,10 @@ abstract class Cell extends Thread {
     public void run() {
         while (alive) {
             if (attemptToEat()) {
-                remainFull(); // if a cell eats, it stays full
+                remainFull();
             } else {
-                this.die(); // if not the cell dies
-                watcher.notifyCellDeath(this); //notifyAll a cell has died
+                this.die();
+                watcher.notifyCellDeath(this);
             }
         }
     }
@@ -36,18 +35,16 @@ abstract class Cell extends Thread {
         long startWait = System.currentTimeMillis();
         boolean ateFood = false;
 
-        while (System.currentTimeMillis() - startWait < T_STARVE && !ateFood) { // loop until cell either starves or eats
-            // eating logic
+        while (System.currentTimeMillis() - startWait < config.T_STARVE && !ateFood) {
             int food = foodPool.consumeFood(1);
             if (food > 0) {
                 mealsEaten++;
                 ateFood = true;
                 System.out.println(this.getName() + " ate food. Total meals: " + mealsEaten);
-                if (mealsEaten >= REPRODUCTION_THRESHOLD) {
+                if (mealsEaten >= config.REPRODUCTION_THRESHOLD) {
                     reproduce();
                 }
             } else {
-                // wait on watcher to notify
                 try {
                     synchronized (watcher) {
                         watcher.wait(100);
@@ -61,10 +58,9 @@ abstract class Cell extends Thread {
     }
 
     private void remainFull() {
-        Random rand = new Random();
-        int fullTime = T_FULL + rand.nextInt(T_FULL_VARIANCE);
+        int fullTime = config.T_FULL + (int) (Math.random() * config.T_FULL_VARIANCE);
         try {
-            Thread.sleep(fullTime); // cell remain full and does nothing
+            Thread.sleep(fullTime);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }

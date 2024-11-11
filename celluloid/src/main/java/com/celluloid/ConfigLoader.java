@@ -1,3 +1,5 @@
+package com.celluloid;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.InputStream;
