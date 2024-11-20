@@ -1,44 +1,42 @@
 package com.celluloid;
 
-import com.celluloid.*;
 import jakarta.annotation.PostConstruct;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
 
 @Service
 public class GameOfLife {
+    private final FoodPool foodPool = new FoodPool();
+    private final Watcher watcher = new Watcher(foodPool);
+    private final Cupid cupid = new Cupid();
 
-    private final FoodPool foodPool;
-    private final Watcher watcher;
-    private final Cupid cupid;
-    private final AsexualCell asexualCell1;
-    private final SexualCell sexualCell1;
-    private final SexualCell sexualCell2;
-    private final SexualCell sexualCell3;
+    private final ArrayList<SexualCell> sexualCells = new ArrayList<>();
+    private final ArrayList<AsexualCell> asexualCells = new ArrayList<>();
 
-    @Autowired
-    public GameOfLife(FoodPool foodPool, Watcher watcher, Cupid cupid,
-                      AsexualCell asexualCell1, SexualCell sexualCell1,
-                      SexualCell sexualCell2, SexualCell sexualCell3) {
-        this.foodPool = foodPool;
-        this.watcher = watcher;
-        this.cupid = cupid;
-        this.asexualCell1 = asexualCell1;
-        this.sexualCell1 = sexualCell1;
-        this.sexualCell2 = sexualCell2;
-        this.sexualCell3 = sexualCell3;
+    public GameOfLife() {
+        for (int i = 0; i < Config.SEXUAL_CELLS_COUNT; i++) {
+            sexualCells.add(new SexualCell("sexual_cell_" + i, foodPool, watcher, cupid));
+        }
+
+        for (int i = 0; i < Config.ASEXUAL_CELLS_COUNT; i++) {
+            asexualCells.add(new AsexualCell("asexual_cell_" + i, foodPool, watcher));
+        }
     }
 
     @PostConstruct
     public void startSimulation() {
-        // Start the Watcher and Cupid threads
         watcher.start();
         cupid.start();
 
-        // Start the simulation by running the cells
-        asexualCell1.start();
-        sexualCell1.start();
-        sexualCell2.start();
-        sexualCell3.start();
+        for (var cell : sexualCells) {
+            Thread thread = new Thread(cell);
+            thread.start();
+        }
+
+        for (var cell : asexualCells) {
+            Thread thread = new Thread(cell);
+            thread.start();
+        }
     }
 }
