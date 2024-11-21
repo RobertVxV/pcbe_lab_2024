@@ -6,12 +6,12 @@ import org.springframework.stereotype.Component;
 public class SexualCell extends Cell {
     private boolean isSeekingPartner = false;
 
-    private Cupid cupid;
+    private Watcher watcher;
 
     // Modify the constructor to accept Config as the third argument
-    public SexualCell(String name, FoodPool foodPool, Watcher watcher, Cupid cupid) {
+    public SexualCell(String name, FoodPool foodPool, Watcher watcher) {
         super(name, foodPool, watcher);  // Pass the config to the superclass constructor
-        this.cupid = cupid;
+        this.watcher = watcher;
     }
 
     @Override
@@ -19,14 +19,14 @@ public class SexualCell extends Cell {
         if (!isSeekingPartner) {
             System.out.println(this.getName() + " is seeking a partner to reproduce.");
             isSeekingPartner = true;
-            cupid.registerCell(this);
+            watcher.registerCell(this);
         }
     }
 
     public synchronized void makeChild(SexualCell partner) {
         if (partner != null) {
             System.out.println(this.getName() + " found a partner: " + partner.getName());
-            SexualCell child = new SexualCell(this.name + "-" + partner.name, foodPool, watcher, cupid);  // Pass config to the child cell
+            SexualCell child = new SexualCell(this.name + "-" + partner.name, foodPool, watcher);  // Pass config to the child cell
             Thread thread = new Thread(child);
             thread.start();
         }
