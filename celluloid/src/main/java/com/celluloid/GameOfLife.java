@@ -1,6 +1,10 @@
 package com.celluloid;
 
+import com.celluloid.cell.AsexualCell;
+import com.celluloid.cell.SexualCell;
 import jakarta.annotation.PostConstruct;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -15,15 +19,15 @@ public class GameOfLife {
 
     public GameOfLife() {
         for (int i = 0; i < Config.SEXUAL_CELLS_COUNT; i++) {
-            sexualCells.add(new SexualCell("sexual_cell_" + i, foodPool, watcher));
+            sexualCells.add(new SexualCell(foodPool, watcher));
         }
 
         for (int i = 0; i < Config.ASEXUAL_CELLS_COUNT; i++) {
-            asexualCells.add(new AsexualCell("asexual_cell_" + i, foodPool, watcher));
+            asexualCells.add(new AsexualCell(foodPool, watcher));
         }
     }
 
-    @PostConstruct
+    @EventListener(ApplicationReadyEvent.class)
     public void startSimulation() {
         watcher.start();
 

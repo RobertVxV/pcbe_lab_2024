@@ -1,20 +1,29 @@
-package com.celluloid;
+package com.celluloid.cell;
+
+import com.celluloid.Config;
+import com.celluloid.FoodPool;
+import com.celluloid.Watcher;
+
+import java.util.concurrent.atomic.AtomicInteger;
 
 public abstract class Cell implements Runnable {
     protected final FoodPool foodPool;
     protected final Watcher watcher;
-    protected final String name;
+    protected final int cellIndex;
 
     protected int mealsEaten = 0;
     protected boolean alive = true;
 
-    public Cell(String name, FoodPool foodPool, Watcher watcher) {
+    private static final AtomicInteger cellCounter = new AtomicInteger(0);
+
+    public Cell(FoodPool foodPool, Watcher watcher) {
         this.foodPool = foodPool;
         this.watcher = watcher;
-        this.name = name;
+        this.cellIndex = cellCounter.getAndIncrement();
     }
 
     public abstract void reproduce();
+    abstract public String getName();
 
     @Override
     public void run() {
@@ -67,9 +76,5 @@ public abstract class Cell implements Runnable {
     protected void die() {
         alive = false;
         System.out.println(getName() + " has died.");
-    }
-
-    public String getName() {
-        return name;
     }
 }
