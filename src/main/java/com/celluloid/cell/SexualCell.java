@@ -1,17 +1,13 @@
-package com.celluloid;
+package com.celluloid.cell;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import com.celluloid.FoodPool;
+import com.celluloid.Watcher;
 
 public class SexualCell extends Cell {
     private boolean isSeekingPartner = false;
 
-    private Watcher watcher;
-
-    // Modify the constructor to accept Config as the third argument
-    public SexualCell(String name, FoodPool foodPool, Watcher watcher) {
-        super(name, foodPool, watcher);  // Pass the config to the superclass constructor
-        this.watcher = watcher;
+    public SexualCell(FoodPool foodPool, Watcher watcher) {
+        super(foodPool, watcher);
     }
 
     @Override
@@ -23,10 +19,16 @@ public class SexualCell extends Cell {
         }
     }
 
+    @Override
+    public String getName() {
+        return "SexualCell_" + cellIndex;
+    }
+
     public synchronized void makeChild(SexualCell partner) {
         if (partner != null) {
             System.out.println(this.getName() + " found a partner: " + partner.getName());
-            SexualCell child = new SexualCell(this.name + "-" + partner.name, foodPool, watcher);  // Pass config to the child cell
+            SexualCell child = new SexualCell(foodPool, watcher);
+
             Thread thread = new Thread(child);
             thread.start();
         }

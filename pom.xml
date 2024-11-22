@@ -8,7 +8,7 @@
     <version>1.0.0</version>
     <packaging>jar</packaging>
 
-    <name>com.celluloid.Cell Simulation</name>
+    <name>com.celluloid.cell.Cell Simulation</name>
     <description>A Spring Boot project for cell simulation</description>
 
     <parent>

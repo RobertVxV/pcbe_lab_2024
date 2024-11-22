@@ -1,5 +1,7 @@
 package com.celluloid;
 
+import com.celluloid.cell.Cell;
+import com.celluloid.cell.SexualCell;
 import org.springframework.stereotype.Service;
 
 import java.util.LinkedList;
