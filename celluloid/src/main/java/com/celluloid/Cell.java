@@ -1,20 +1,17 @@
 package com.celluloid;
 
-import org.springframework.beans.factory.annotation.Autowired;
-
-public abstract class Cell extends Thread {
+public abstract class Cell implements Runnable {
     protected final FoodPool foodPool;
     protected final Watcher watcher;
-    protected final Config config;
+    protected final String name;
 
     protected int mealsEaten = 0;
     protected boolean alive = true;
 
-    @Autowired
-    public Cell(FoodPool foodPool, Watcher watcher, Config config) {
+    public Cell(String name, FoodPool foodPool, Watcher watcher) {
         this.foodPool = foodPool;
         this.watcher = watcher;
-        this.config = config;
+        this.name = name;
     }
 
     public abstract void reproduce();
@@ -29,19 +26,20 @@ public abstract class Cell extends Thread {
                 watcher.notifyCellDeath(this);
             }
         }
+
+        System.out.println(this.getName() + " has closed.");
     }
 
     private boolean attemptToEat() {
         long startWait = System.currentTimeMillis();
         boolean ateFood = false;
-
-        while (System.currentTimeMillis() - startWait < config.T_STARVE && !ateFood) {
+        while (System.currentTimeMillis() - startWait < Config.T_STARVE && !ateFood) {
             int food = foodPool.consumeFood(1);
             if (food > 0) {
                 mealsEaten++;
                 ateFood = true;
-                System.out.println(this.getName() + " ate food. Total meals: " + mealsEaten);
-                if (mealsEaten >= config.REPRODUCTION_THRESHOLD) {
+                System.out.println(getName() + " ate food. Total meals: " + mealsEaten);
+                if (mealsEaten >= Config.REPRODUCTION_THRESHOLD) {
                     reproduce();
                 }
             } else {
@@ -58,7 +56,7 @@ public abstract class Cell extends Thread {
     }
 
     private void remainFull() {
-        int fullTime = config.T_FULL + (int) (Math.random() * config.T_FULL_VARIANCE);
+        int fullTime = Config.T_FULL + (int) (Math.random() * Config.T_FULL_VARIANCE);
         try {
             Thread.sleep(fullTime);
         } catch (InterruptedException e) {
@@ -68,6 +66,10 @@ public abstract class Cell extends Thread {
 
     protected void die() {
         alive = false;
-        System.out.println(this.getName() + " has died.");
+        System.out.println(getName() + " has died.");
+    }
+
+    public String getName() {
+        return name;
     }
 }
