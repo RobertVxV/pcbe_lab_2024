@@ -1,6 +1,5 @@
 package com.celluloid;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -19,5 +18,5 @@ public class Config {
 
     public static int SEXUAL_CELLS_COUNT = 4;
 
-    public static int ASEXUAL_CELLS_COUNT = 0;
+    public static int ASEXUAL_CELLS_COUNT = 3;
 }
