@@ -1,18 +1,21 @@
 package com.celluloid.cell;
 
+import com.celluloid.Config;
 import com.celluloid.FoodPool;
 import com.celluloid.Watcher;
 
 public class AsexualCell extends Cell {
-    public AsexualCell(FoodPool foodPool, Watcher watcher) {
-        super(foodPool, watcher);
+    Config config;
+    public AsexualCell(FoodPool foodPool, Watcher watcher, Config config) {
+        super(foodPool, watcher, config);
+        this.config = config;
     }
 
     @Override
     public void reproduce() {
         System.out.println(this.getName() + " is reproducing asexually.");
-        AsexualCell child1 = new AsexualCell(foodPool, watcher);
-        AsexualCell child2 = new AsexualCell(foodPool, watcher);
+        AsexualCell child1 = new AsexualCell(foodPool, watcher, config);
+        AsexualCell child2 = new AsexualCell(foodPool, watcher, config);
 
         // start child threads
         Thread thread1 = new Thread(child1);

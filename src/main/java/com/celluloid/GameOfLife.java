@@ -12,23 +12,30 @@ import java.util.ArrayList;
 public class GameOfLife {
     private final FoodPool foodPool = new FoodPool();
     private final Watcher watcher = new Watcher(foodPool);
+    private final Cupid cupid = new Cupid();
 
     private final ArrayList<SexualCell> sexualCells = new ArrayList<>();
     private final ArrayList<AsexualCell> asexualCells = new ArrayList<>();
 
-    public GameOfLife() {
-        for (int i = 0; i < Config.SEXUAL_CELLS_COUNT; i++) {
-            sexualCells.add(new SexualCell(foodPool, watcher));
+    private final Config config;
+
+
+    public GameOfLife(Config config) {
+        this.config = config;
+
+        for (int i = 0; i <  config.getSexualCellsCount(); i++) {
+            sexualCells.add(new SexualCell(foodPool, watcher, cupid, config));
         }
 
-        for (int i = 0; i < Config.ASEXUAL_CELLS_COUNT; i++) {
-            asexualCells.add(new AsexualCell(foodPool, watcher));
+        for (int i = 0; i < config.getAsexualCellsCount(); i++) {
+            asexualCells.add(new AsexualCell(foodPool, watcher, config));
         }
     }
 
     @EventListener(ApplicationReadyEvent.class)
     public void startSimulation() {
         watcher.start();
+        cupid.start();
 
         for (var cell : sexualCells) {
             Thread thread = new Thread(cell);

@@ -16,7 +16,10 @@ public abstract class Cell implements Runnable {
 
     private static final AtomicInteger cellCounter = new AtomicInteger(0);
 
-    public Cell(FoodPool foodPool, Watcher watcher) {
+    private final Config config;
+
+    public Cell(FoodPool foodPool, Watcher watcher, Config config) {
+        this.config = config;
         this.foodPool = foodPool;
         this.watcher = watcher;
         this.cellIndex = cellCounter.getAndIncrement();
@@ -42,13 +45,13 @@ public abstract class Cell implements Runnable {
     private boolean attemptToEat() {
         long startWait = System.currentTimeMillis();
         boolean ateFood = false;
-        while (System.currentTimeMillis() - startWait < Config.T_STARVE && !ateFood) {
+        while (System.currentTimeMillis() - startWait < config.gettStarve() && !ateFood) {
             int food = foodPool.consumeFood(1);
             if (food > 0) {
                 mealsEaten++;
                 ateFood = true;
                 System.out.println(getName() + " ate food. Total meals: " + mealsEaten);
-                if (mealsEaten >= Config.REPRODUCTION_THRESHOLD) {
+                if (mealsEaten >= config.getReproductionThreshold()) {
                     reproduce();
                 }
             } else {
@@ -65,7 +68,7 @@ public abstract class Cell implements Runnable {
     }
 
     private void remainFull() {
-        int fullTime = Config.T_FULL + (int) (Math.random() * Config.T_FULL_VARIANCE);
+        int fullTime = config.gettFull() + (int) (Math.random() * config.gettFullVariance());
         try {
             Thread.sleep(fullTime);
         } catch (InterruptedException e) {

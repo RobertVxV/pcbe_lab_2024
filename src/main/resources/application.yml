@@ -1,0 +1,7 @@
+gameoflife:
+  reproduction-threshold: 3
+  t-full: 1000
+  t-starve: 2000
+  t-full-variance: 500
+  sexual-cells-count: 4
+  asexual-cells-count: 3

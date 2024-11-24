@@ -1,22 +1,64 @@
 package com.celluloid;
 
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
 @Component
+@ConfigurationProperties(prefix = "gameoflife")
 public class Config {
-//    @Value("${cell.full.time:1000}")
-    public static int T_FULL = 1000;
+    private int reproductionThreshold;
+    private int tFull;
+    private int tStarve;
+    private int tFullVariance;
+    private int sexualCellsCount;
+    private int asexualCellsCount;
 
-//    @Value("${cell.starve.time:2000}")
-    public static int T_STARVE = 2000;
+    // Getters and setters
+    public int getReproductionThreshold() {
+        return reproductionThreshold;
+    }
 
-//    @Value("${cell.full.variance:500}")
-    public static int T_FULL_VARIANCE = 500;
+    public void setReproductionThreshold(int reproductionThreshold) {
+        this.reproductionThreshold = reproductionThreshold;
+    }
 
-//    @Value("${cell.reproduction.threshold:3}")
-    public static int REPRODUCTION_THRESHOLD = 3;
+    public int gettFull() {
+        return tFull;
+    }
 
-    public static int SEXUAL_CELLS_COUNT = 4;
+    public void settFull(int tFull) {
+        this.tFull = tFull;
+    }
 
-    public static int ASEXUAL_CELLS_COUNT = 3;
+    public int gettStarve() {
+        return tStarve;
+    }
+
+    public void settStarve(int tStarve) {
+        this.tStarve = tStarve;
+    }
+
+    public int gettFullVariance() {
+        return tFullVariance;
+    }
+
+    public void settFullVariance(int tFullVariance) {
+        this.tFullVariance = tFullVariance;
+    }
+
+    public int getSexualCellsCount() {
+        return sexualCellsCount;
+    }
+
+    public void setSexualCellsCount(int sexualCellsCount) {
+        this.sexualCellsCount = sexualCellsCount;
+    }
+
+    public int getAsexualCellsCount() {
+        return asexualCellsCount;
+    }
+
+    public void setAsexualCellsCount(int asexualCellsCount) {
+        this.asexualCellsCount = asexualCellsCount;
+    }
 }
