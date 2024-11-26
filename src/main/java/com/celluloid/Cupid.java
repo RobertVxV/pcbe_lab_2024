@@ -1,6 +1,7 @@
 package com.celluloid;
 
 import com.celluloid.cell.SexualCell;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.LinkedList;
@@ -9,6 +10,13 @@ import java.util.LinkedList;
 public class Cupid extends Thread{
 
     private final LinkedList<SexualCell> waitingCells = new LinkedList<>();
+    private RabbitTemplate rabbitTemplate;
+    private RabbitMQConfig rabbitMQConfig;
+
+    public Cupid(RabbitTemplate rabbitTemplate, RabbitMQConfig rabbitMQConfig) {
+        this.rabbitTemplate = rabbitTemplate;
+        this.rabbitMQConfig = rabbitMQConfig;
+    }
 
     public void registerCell(SexualCell cell) {
         synchronized (waitingCells) {
@@ -32,7 +40,8 @@ public class Cupid extends Thread{
             if (waitingCells.size() >= 2) {
                 SexualCell cell1 = waitingCells.removeFirst();
                 SexualCell cell2 = waitingCells.removeFirst();
-                cell1.makeChild(cell2);
+                rabbitTemplate.convertAndSend(rabbitMQConfig.cupidExchange, rabbitMQConfig.cupidRoutingKey, new Object[] {cell1, cell2});
+                //cell1.makeChild(cell2);
             }
         }
     }

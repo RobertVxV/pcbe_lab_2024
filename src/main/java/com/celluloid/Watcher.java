@@ -12,9 +12,12 @@ import java.util.Random;
 public class Watcher extends Thread {
     private final FoodPool foodPool;
     private final PriorityQueue<CellTime> notifyQueue = new PriorityQueue<>();
+    private final Config config;
 
-    public Watcher(FoodPool foodPool) {
+    public Watcher(FoodPool foodPool, Config config) {
+
         this.foodPool = foodPool;
+        this.config = config;
     }
 
     public void notifyCellDeath(Cell cell) {

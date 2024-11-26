@@ -1,9 +1,7 @@
 package com.celluloid.cell;
 
-import com.celluloid.Config;
-import com.celluloid.Cupid;
-import com.celluloid.FoodPool;
-import com.celluloid.Watcher;
+import com.celluloid.*;
+import org.springframework.amqp.rabbit.annotation.RabbitListener;
 
 public class SexualCell extends Cell {
     private boolean isSeekingPartner = false;
@@ -38,5 +36,14 @@ public class SexualCell extends Cell {
             Thread thread = new Thread(child);
             thread.start();
         }
+    }
+
+    @RabbitListener(queues = RabbitMQConfig.cupidQueue)
+    public void consume(Object [] cells)
+    {
+        SexualCell cell1 = (SexualCell) cells[0];
+        SexualCell cell2 = (SexualCell) cells[1];
+
+        cell1.makeChild(cell2);
     }
 }

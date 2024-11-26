@@ -81,6 +81,5 @@ public abstract class Cell implements Runnable {
     protected void die() {
         alive = false;
         watcher.notifyCellDeath(this);
-        System.out.println(getName() + " has died.");
     }
 }

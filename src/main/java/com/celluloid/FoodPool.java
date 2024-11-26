@@ -6,7 +6,7 @@ import java.util.concurrent.Semaphore;
 
 @Service
 public class FoodPool {
-    private int totalFood = 100; // Initial amount, configurable later
+    private int totalFood = 3; // Initial amount, configurable later
     private final Semaphore semaphore = new Semaphore(1);
 
     public int consumeFood(int amount) {
