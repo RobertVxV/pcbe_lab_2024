@@ -4,80 +4,83 @@ import com.celluloid.Config;
 import com.celluloid.FoodPool;
 import com.celluloid.Watcher;
 
+import java.time.Duration;
+import java.time.Instant;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public abstract class Cell implements Runnable {
-    protected final FoodPool foodPool;
-    protected final Watcher watcher;
-    protected final int cellIndex;
-
-    protected int mealsEaten = 0;
-    protected boolean alive = true;
-
     private static final AtomicInteger cellCounter = new AtomicInteger(0);
 
+    protected final FoodPool foodPool;
+    protected final Watcher watcher;
     private final Config config;
+
+    protected final int cellIndex;
+    protected int mealsEaten = 0;
+    protected boolean alive = true;
+    protected Instant lastMealTime = Instant.now();
 
     public Cell(FoodPool foodPool, Watcher watcher, Config config) {
         this.config = config;
         this.foodPool = foodPool;
         this.watcher = watcher;
         this.cellIndex = cellCounter.getAndIncrement();
+
+        watcher.addCellToQueue(this, Instant.now());
     }
 
     public abstract void reproduce();
-    abstract public String getName();
+    public abstract String getName();
 
     @Override
     public void run() {
         while (alive) {
-            if (attemptToEat()) {
-                remainFull();
-            } else {
-                this.die();
-                watcher.notifyCellDeath(this);
+            if (isStarving()) {
+                die();
+            }
+            synchronized (foodPool) {
+                if (canEat()) {
+                    eat();
+                }
+            }
+            if (canReproduce()) {
+                reproduce();
+            }
+
+            synchronized (this) {
+                watcher.addCellToQueue(this, Instant.now().plusMillis(config.getTFull()));
+                try {
+                    wait();
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
             }
         }
-
         System.out.println(this.getName() + " has closed.");
     }
 
-    private boolean attemptToEat() {
-        long startWait = System.currentTimeMillis();
-        boolean ateFood = false;
-        while (System.currentTimeMillis() - startWait < config.gettStarve() && !ateFood) {
-            int food = foodPool.consumeFood(1);
-            if (food > 0) {
-                mealsEaten++;
-                ateFood = true;
-                System.out.println(getName() + " ate food. Total meals: " + mealsEaten);
-                if (mealsEaten >= config.getReproductionThreshold()) {
-                    reproduce();
-                }
-            } else {
-                try {
-                    synchronized (watcher) {
-                        watcher.wait(100);
-                    }
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
-                }
-            }
-        }
-        return ateFood;
+    private boolean isStarving() {
+        return Duration.between(Instant.now(), lastMealTime).toMillis() > config.getTStarve();
     }
 
-    private void remainFull() {
-        int fullTime = config.gettFull() + (int) (Math.random() * config.gettFullVariance());
-        try {
-            Thread.sleep(fullTime);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        }
+    private boolean canEat() {
+        return foodPool.getTotalFood() > 0;
+    }
+
+    private void eat() {
+        foodPool.consumeFood(1);
+        mealsEaten++;
+        lastMealTime = Instant.now();
+        System.out.println(getName() + " ate food. Total meals: " + mealsEaten);
+    }
+
+    private boolean canReproduce() {
+        return mealsEaten >= config.getReproductionThreshold();
     }
 
     protected void die() {
         alive = false;
+        watcher.notifyCellDeath(this);
         System.out.println(getName() + " has died.");
     }
 }

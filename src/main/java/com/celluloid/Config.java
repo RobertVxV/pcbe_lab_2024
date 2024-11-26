@@ -22,27 +22,27 @@ public class Config {
         this.reproductionThreshold = reproductionThreshold;
     }
 
-    public int gettFull() {
+    public int getTFull() {
         return tFull;
     }
 
-    public void settFull(int tFull) {
+    public void setTFull(int tFull) {
         this.tFull = tFull;
     }
 
-    public int gettStarve() {
+    public int getTStarve() {
         return tStarve;
     }
 
-    public void settStarve(int tStarve) {
+    public void setTStarve(int tStarve) {
         this.tStarve = tStarve;
     }
 
-    public int gettFullVariance() {
+    public int getTFullVariance() {
         return tFullVariance;
     }
 
-    public void settFullVariance(int tFullVariance) {
+    public void setTFullVariance(int tFullVariance) {
         this.tFullVariance = tFullVariance;
     }
 

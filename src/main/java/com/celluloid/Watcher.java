@@ -1,15 +1,17 @@
 package com.celluloid;
 
 import com.celluloid.cell.Cell;
-import com.celluloid.cell.SexualCell;
+import com.celluloid.utils.CellTime;
 import org.springframework.stereotype.Service;
 
-import java.util.LinkedList;
+import java.time.Instant;
+import java.util.PriorityQueue;
 import java.util.Random;
 
 @Service
 public class Watcher extends Thread {
     private final FoodPool foodPool;
+    private final PriorityQueue<CellTime> notifyQueue = new PriorityQueue<>();
 
     public Watcher(FoodPool foodPool) {
         this.foodPool = foodPool;
@@ -23,21 +25,13 @@ public class Watcher extends Thread {
         System.out.println(cell.getName() + " added " + foodToAdd + " food to the pool.");
     }
 
+    public void addCellToQueue(Cell cell, Instant time) {
+        notifyQueue.add(new CellTime(cell, time));
+    }
 
     @Override
     public void run() {
-        while (true) {
-            try {
-                Thread.sleep(50); // Check food status at intervals
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-            }
-            synchronized (this) {
-                if (foodPool.getTotalFood() > 0) {
-                    notifyAll(); // Notify cells if food is available
-                }
-            }
-        }
+
     }
 
 
