@@ -1,16 +1,28 @@
 package com.celluloid;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
 @Component
 @ConfigurationProperties(prefix = "gameoflife")
 public class Config {
+    @JsonProperty("reproductionThreshold")
     private int reproductionThreshold;
+
+    @JsonProperty("tFull")
     private int tFull;
+
+    @JsonProperty("tStarve")
     private int tStarve;
+
+    @JsonProperty("tFullVariance")
     private int tFullVariance;
+
+    @JsonProperty("sexualCellsCount")
     private int sexualCellsCount;
+
+    @JsonProperty("asexualCellsCount")
     private int asexualCellsCount;
 
     // Getters and setters
