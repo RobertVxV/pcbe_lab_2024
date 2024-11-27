@@ -31,7 +31,16 @@ public class Watcher extends Thread {
 
     @Override
     public void run() {
-
+        // TODO optimizeaza
+        while (true) {
+            var cellTime = notifyQueue.poll();
+            if (cellTime == null || cellTime.timestamp().isBefore(Instant.now())) {
+                try {
+                    sleep(10);
+                } catch (InterruptedException ignored) {}
+            }
+            cellTime.cell().notify();
+        }
     }
 
 

@@ -51,9 +51,7 @@ public abstract class Cell implements Runnable {
                 watcher.addCellToQueue(this, Instant.now().plusMillis(config.getTFull()));
                 try {
                     wait();
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
+                } catch (InterruptedException ignored) {}
             }
         }
         System.out.println(this.getName() + " has closed.");
