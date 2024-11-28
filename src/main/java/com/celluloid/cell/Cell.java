@@ -35,19 +35,27 @@ public abstract class Cell implements Runnable {
     @Override
     public void run() {
         while (alive) {
+            var perfromedAction = false;
             if (isStarving()) {
+                perfromedAction = true;
                 die();
             }
             synchronized (foodPool) {
                 if (canEat()) {
+                    perfromedAction = true;
                     eat();
                 }
             }
             if (canReproduce()) {
+                perfromedAction = true;
                 reproduce();
             }
 
             synchronized (this) {
+                if (!perfromedAction) {
+                    continue;
+                }
+
                 watcher.addCellToQueue(this, Instant.now().plusMillis(config.getTFull()));
                 try {
                     wait();

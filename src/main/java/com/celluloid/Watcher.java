@@ -44,28 +44,23 @@ public class Watcher extends Thread {
                         if (!notifyQueue.isEmpty()) {
                             Instant nextTime = notifyQueue.peek().timestamp();
                             long waitTime = nextTime.toEpochMilli() - Instant.now().toEpochMilli();
-//                            System.out.println("Next cell timestamp: " + nextTime + ", Current time: " + Instant.now());
-//                            System.out.println("Waiting for: " + waitTime + "ms. Queue size: " + notifyQueue.size());
 
                             if (waitTime <= 0) {
-                                break; // Force processing
+                                break;
                             }
-                            notifyQueue.wait(Math.max(waitTime, 1000)); // Wake up every second to recheck
+                            notifyQueue.wait(Math.max(waitTime, 1000));
                         } else {
-//                            System.out.println("Queue is empty. Waiting indefinitely.");
-                            notifyQueue.wait(1000); // Periodically wake up even if empty
+                            notifyQueue.wait(1000);
                         }
                     }
-//                    System.out.println("Processing queue. Size before poll: " + notifyQueue.size());
                     entry = notifyQueue.poll();
-                    //loop... needs fixing??
+                    // TODO loop... needs fixing??
                     System.out.println("Polled entry: " + (entry != null ? entry.cell().getName() : "null"));
                 }
 
                 if (entry != null) {
                     var cell = entry.cell();
                     synchronized (cell) {
-//                        System.out.println("Notifying cell: " + cell.getName());
                         cell.notify();
                     }
                 }
