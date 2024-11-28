@@ -45,7 +45,7 @@ public abstract class Cell implements Runnable {
     private boolean attemptToEat() {
         long startWait = System.currentTimeMillis();
         boolean ateFood = false;
-        while (System.currentTimeMillis() - startWait < config.gettStarve() && !ateFood) {
+        while (System.currentTimeMillis() - startWait < config.getTStarve() && !ateFood) {
             int food = foodPool.consumeFood(1);
             if (food > 0) {
                 mealsEaten++;
@@ -68,7 +68,7 @@ public abstract class Cell implements Runnable {
     }
 
     private void remainFull() {
-        int fullTime = config.gettFull() + (int) (Math.random() * config.gettFullVariance());
+        int fullTime = config.getTFull() + (int) (Math.random() * config.getTFullVariance());
         try {
             Thread.sleep(fullTime);
         } catch (InterruptedException e) {
