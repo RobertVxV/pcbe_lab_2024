@@ -19,7 +19,6 @@ public class ConfigController {
     }
     @GetMapping
     public ResponseEntity<Config> getConfig() {
-        System.out.println("returnare config serializat");
         var headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         return new ResponseEntity<>(config, headers, HttpStatus.OK);
