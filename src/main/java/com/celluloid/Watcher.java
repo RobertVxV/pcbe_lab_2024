@@ -10,6 +10,7 @@ import java.util.Random;
 @Service
 public class Watcher extends Thread {
     private final FoodPool foodPool;
+    private final GlobalState globalState = GlobalState.getInstance();
 
     public Watcher(FoodPool foodPool) {
         this.foodPool = foodPool;
@@ -20,6 +21,15 @@ public class Watcher extends Thread {
         Random rand = new Random();
         int foodToAdd = rand.nextInt(5) + 1;
         foodPool.addFood(foodToAdd);
+        globalState.addFood(foodToAdd);
+
+        globalState.incrementCellsDied(); // Increment the count of cells that died
+        if (cell instanceof SexualCell) {
+            globalState.decrementSexualCellsAlive(); // Decrement sexual cell count
+        } else {
+            globalState.decrementAsexualCellsAlive(); // Decrement asexual cell count
+        }
+
         System.out.println(cell.getName() + " added " + foodToAdd + " food to the pool.");
     }
 

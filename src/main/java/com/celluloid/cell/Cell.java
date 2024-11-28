@@ -2,6 +2,7 @@ package com.celluloid.cell;
 
 import com.celluloid.Config;
 import com.celluloid.FoodPool;
+import com.celluloid.GlobalState;
 import com.celluloid.Watcher;
 
 import java.util.concurrent.atomic.AtomicInteger;
@@ -10,6 +11,7 @@ public abstract class Cell implements Runnable {
     protected final FoodPool foodPool;
     protected final Watcher watcher;
     protected final int cellIndex;
+    private final GlobalState globalState = GlobalState.getInstance();
 
     protected int mealsEaten = 0;
     protected boolean alive = true;
@@ -50,6 +52,7 @@ public abstract class Cell implements Runnable {
             if (food > 0) {
                 mealsEaten++;
                 ateFood = true;
+                globalState.consumeFood(1);
                 System.out.println(getName() + " ate food. Total meals: " + mealsEaten);
                 if (mealsEaten >= config.getReproductionThreshold()) {
                     reproduce();

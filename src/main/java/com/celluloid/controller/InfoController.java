@@ -1,0 +1,26 @@
+package com.celluloid.controller;
+
+import com.celluloid.GlobalState;
+import com.celluloid.Watcher;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Map;
+
+@RestController
+@RequestMapping("/info")
+public class InfoController {
+
+    private final GlobalState globalState = GlobalState.getInstance(); // Access the GlobalState singleton
+
+    @GetMapping("/stats")
+    public Map<String, Object> getStats() {
+        return Map.of(
+                "sexualCellsAlive", globalState.getSexualCellsAlive(),
+                "asexualCellsAlive", globalState.getAsexualCellsAlive(),
+                "cellsDied", globalState.getCellsDied(),
+                "foodUnitsAvailable", globalState.getTotalFood() // Assuming you have a method in GlobalState or another service for this
+        );
+    }
+}

@@ -1,19 +1,18 @@
 package com.celluloid.cell;
 
-import com.celluloid.Config;
-import com.celluloid.Cupid;
-import com.celluloid.FoodPool;
-import com.celluloid.Watcher;
+import com.celluloid.*;
 
 public class SexualCell extends Cell {
     private boolean isSeekingPartner = false;
     private Cupid cupid;
     private Config config;
+    private final GlobalState globalState = GlobalState.getInstance();
 
     public SexualCell(FoodPool foodPool, Watcher watcher, Cupid cupid, Config config) {
         super(foodPool, watcher, config);
         this.cupid = cupid;
         this.config = config;
+        //globalState.incrementSexualCellsAlive(4);
     }
 
     @Override
@@ -36,7 +35,10 @@ public class SexualCell extends Cell {
             SexualCell child = new SexualCell(foodPool, watcher, cupid, config);
 
             Thread thread = new Thread(child);
+
             thread.start();
+
+            globalState.incrementSexualCellsAlive(1);
         }
     }
 }
