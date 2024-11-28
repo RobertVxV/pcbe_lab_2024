@@ -46,6 +46,7 @@ public class ConfigController {
     private Map<String, Object> createConfigMap(Config config) {
         return Map.of(
                 "gameoflife", Map.of(
+                        "startFood", config.getStartFood(),
                         "reproductionThreshold", config.getReproductionThreshold(),
                         "tFull", config.getTFull(),
                         "tStarve", config.getTStarve(),

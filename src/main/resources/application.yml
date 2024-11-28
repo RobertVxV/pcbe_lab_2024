@@ -1,4 +1,5 @@
 gameoflife:
+  startFood: 10
   asexualCellsCount: 6
   tStarve: 2000
   sexualCellsCount: 5

@@ -10,7 +10,7 @@ import java.util.ArrayList;
 
 @Service
 public class GameOfLife {
-    private final FoodPool foodPool = new FoodPool();
+    private FoodPool foodPool;
     private final Watcher watcher = new Watcher(foodPool);
     private final Cupid cupid = new Cupid();
 
@@ -19,9 +19,9 @@ public class GameOfLife {
 
     private final Config config;
 
-
     public GameOfLife(Config config) {
         this.config = config;
+        foodPool = new FoodPool(config.getStartFood());
 
         for (int i = 0; i <  config.getSexualCellsCount(); i++) {
             sexualCells.add(new SexualCell(foodPool, watcher, cupid, config));

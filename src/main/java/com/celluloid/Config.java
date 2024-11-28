@@ -7,6 +7,9 @@ import org.springframework.stereotype.Component;
 @Component
 @ConfigurationProperties(prefix = "gameoflife")
 public class Config {
+    @JsonProperty("startFood")
+    private int startFood;
+
     @JsonProperty("reproductionThreshold")
     private int reproductionThreshold;
 
@@ -24,6 +27,10 @@ public class Config {
 
     @JsonProperty("asexualCellsCount")
     private int asexualCellsCount;
+
+    public int getStartFood() {
+        return startFood;
+    }
 
     // Getters and setters
     public int getReproductionThreshold() {
@@ -44,6 +51,10 @@ public class Config {
 
     public int getTStarve() {
         return tStarve;
+    }
+
+    public void setStartFood(int startFood) {
+        this.startFood = startFood;
     }
 
     public void setTStarve(int tStarve) {
