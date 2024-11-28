@@ -1,11 +1,13 @@
 package com.celluloid.utils;
 
 import com.celluloid.cell.Cell;
+import jakarta.annotation.Nonnull;
 
 import java.time.Instant;
 
-public record CellTime(Cell cell, Instant timestamp) {
-    public static int compare(CellTime c1, CellTime c2) {
-        return c1.timestamp.compareTo(c2.timestamp);
+public record CellTime(Cell cell, Instant timestamp) implements Comparable<CellTime> {
+    @Override
+    public int compareTo(@Nonnull CellTime cellTime) {
+        return this.timestamp.compareTo(cellTime.timestamp);
     }
 }

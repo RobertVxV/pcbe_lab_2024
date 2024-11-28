@@ -33,15 +33,19 @@ public class Watcher extends Thread {
     public void run() {
         // TODO optimizeaza
         while (true) {
-            var cellTime = notifyQueue.poll();
-            if (cellTime == null || cellTime.timestamp().isBefore(Instant.now())) {
-                try {
-                    sleep(10);
-                } catch (InterruptedException ignored) {}
+            if (notifyQueue.isEmpty() || notifyQueue.peek().timestamp().isAfter(Instant.now())) {
+//                var cell = notifyQueue.peek();
+//                try {
+//                    sleep(10);
+//                } catch (InterruptedException ignored) {}
+                continue;
             }
-            cellTime.cell().notify();
+//                System.out.println(cell.timestamp().getEpochSecond() + " - " + Instant.now().getEpochSecond());
+            var entry = notifyQueue.poll();
+            var cell = entry.cell();
+            synchronized (cell) {
+                cell.notify();
+            }
         }
     }
-
-
 }

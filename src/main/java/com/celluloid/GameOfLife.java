@@ -19,7 +19,6 @@ public class GameOfLife {
 
     private final Config config;
 
-
     public GameOfLife(Config config) {
         this.config = config;
 
