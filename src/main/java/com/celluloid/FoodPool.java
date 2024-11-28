@@ -7,12 +7,12 @@ import java.util.concurrent.Semaphore;
 
 @Service
 public class FoodPool {
-    private final int totalFood = new FoodPool();
+    private int totalFood;
     private final Semaphore semaphore = new Semaphore(1);
 
-//    public FoodPool(int startFood) {
-//        this.totalFood = startFood;
-//    }
+    public FoodPool(int startFood) {
+        this.totalFood = startFood;
+    }
 
     public int consumeFood(int amount) {
         int foodConsumed = 0;
