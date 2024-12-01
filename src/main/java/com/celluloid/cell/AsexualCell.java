@@ -2,23 +2,25 @@ package com.celluloid.cell;
 
 import com.celluloid.Config;
 import com.celluloid.FoodPool;
-import com.celluloid.GlobalState;
+import com.celluloid.GlobalGameStats;
 import com.celluloid.Watcher;
 
 public class AsexualCell extends Cell {
-    Config config;
-    private final GlobalState globalState = GlobalState.getInstance();
-    public AsexualCell(FoodPool foodPool, Watcher watcher, Config config) {
+    private Config config;
+    private boolean created_by_user;
+    private final GlobalGameStats globalState = GlobalGameStats.getInstance();
+    public AsexualCell(FoodPool foodPool, Watcher watcher, Config config, boolean created_by_user) {
         super(foodPool, watcher, config);
         this.config = config;
+        this.created_by_user = created_by_user;
        // globalState.incrementAsexualCellsAlive(3);
     }
 
     @Override
     public void reproduce() {
         System.out.println(this.getName() + " is reproducing asexually.");
-        AsexualCell child1 = new AsexualCell(foodPool, watcher, config);
-        AsexualCell child2 = new AsexualCell(foodPool, watcher, config);
+        AsexualCell child1 = new AsexualCell(foodPool, watcher, config, false);
+        AsexualCell child2 = new AsexualCell(foodPool, watcher, config, false);
 
 
         // start child threads
@@ -34,6 +36,6 @@ public class AsexualCell extends Cell {
 
     @Override
     public String getName() {
-        return "AsexualCell_" + cellIndex;
+        return (this.created_by_user) ? "AsexualCell_CREATED_BY_USER_" + cellIndex : "AsexualCell_" + cellIndex;
     }
 }

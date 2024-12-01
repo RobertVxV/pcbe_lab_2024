@@ -4,13 +4,12 @@ import com.celluloid.cell.Cell;
 import com.celluloid.cell.SexualCell;
 import org.springframework.stereotype.Service;
 
-import java.util.LinkedList;
 import java.util.Random;
 
 @Service
 public class Watcher extends Thread {
     private final FoodPool foodPool;
-    private final GlobalState globalState = GlobalState.getInstance();
+    private final GlobalGameStats globalState = GlobalGameStats.getInstance();
 
     public Watcher(FoodPool foodPool) {
         this.foodPool = foodPool;

@@ -5,8 +5,8 @@ import org.springframework.stereotype.Component;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Component
-public class GlobalState {
-    private static GlobalState instance;
+public class GlobalGameStats {
+    private static GlobalGameStats instance;
 
     private AtomicInteger sexualCellsAlive = new AtomicInteger(4);
     private AtomicInteger asexualCellsAlive = new AtomicInteger(3);
@@ -14,12 +14,12 @@ public class GlobalState {
     private AtomicInteger totalFood = new AtomicInteger(50);
 
     private static class SingletonHelper {
-        private static final GlobalState INSTANCE = new GlobalState();
+        private static final GlobalGameStats INSTANCE = new GlobalGameStats();
     }
 
-    private GlobalState() {}
+    private GlobalGameStats() {}
 
-    public static GlobalState getInstance() {
+    public static GlobalGameStats getInstance() {
         return SingletonHelper.INSTANCE;
     }
 

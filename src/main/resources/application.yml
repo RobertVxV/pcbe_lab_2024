@@ -1,7 +1,7 @@
 gameoflife:
-  asexualCellsCount: 6
+  asexualCellsCount: 2
   tStarve: 2000
-  sexualCellsCount: 5
+  sexualCellsCount: 1
   tFullVariance: 600
   tFull: 1000
   reproductionThreshold: 3

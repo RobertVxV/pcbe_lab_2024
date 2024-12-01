@@ -24,11 +24,11 @@ public class GameOfLife {
         this.config = config;
 
         for (int i = 0; i <  config.getSexualCellsCount(); i++) {
-            sexualCells.add(new SexualCell(foodPool, watcher, cupid, config));
+            sexualCells.add(new SexualCell(foodPool, watcher, cupid, config, false));
         }
 
         for (int i = 0; i < config.getAsexualCellsCount(); i++) {
-            asexualCells.add(new AsexualCell(foodPool, watcher, config));
+            asexualCells.add(new AsexualCell(foodPool, watcher, config, false));
         }
     }
 
@@ -44,6 +44,28 @@ public class GameOfLife {
 
         for (var cell : asexualCells) {
             Thread thread = new Thread(cell);
+            thread.start();
+        }
+    }
+
+    public void addSexualCell(int count) {
+        for (int i = 0; i < count; i++) {
+            SexualCell cell = new SexualCell(foodPool, watcher, cupid, config, true);
+            sexualCells.add(cell);
+
+            Thread thread = new Thread(cell);
+            //thread.setName("SexualCell_CREATED_BY_USER_" + (sexualCells.size() - 1));
+            thread.start();
+        }
+    }
+
+    public void addAsexualCell(int count) {
+        for (int i = 0; i < count; i++) {
+            AsexualCell cell = new AsexualCell(foodPool, watcher, config, true);
+            asexualCells.add(cell);
+
+            Thread thread = new Thread(cell);
+            //thread.setName("AsexualCell_CREATED_BY_USER_" + (asexualCells.size() - 1));
             thread.start();
         }
     }
