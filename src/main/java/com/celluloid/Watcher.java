@@ -32,6 +32,10 @@ public class Watcher extends Thread {
         System.out.println(cell.getName() + " added " + foodToAdd + " food to the pool.");
     }
 
+    public synchronized void notifyFoodAvailable() {
+        System.out.println("Watcher: Notifying all cells about food availability.");
+        notifyAll();
+    }
 
     @Override
     public void run() {

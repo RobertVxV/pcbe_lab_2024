@@ -11,7 +11,7 @@ public class GlobalGameStats {
     private AtomicInteger sexualCellsAlive = new AtomicInteger(4);
     private AtomicInteger asexualCellsAlive = new AtomicInteger(3);
     private AtomicInteger cellsDied = new AtomicInteger(0);
-    private AtomicInteger totalFood = new AtomicInteger(50);
+    private AtomicInteger totalFood = new AtomicInteger(100);
 
     private static class SingletonHelper {
         private static final GlobalGameStats INSTANCE = new GlobalGameStats();
@@ -29,7 +29,6 @@ public class GlobalGameStats {
 
     public void incrementSexualCellsAlive(int amount) {
         int newCount = sexualCellsAlive.addAndGet(amount);
-        System.out.println("Sexual Cells Alive: " + newCount);
     }
 
     public void decrementSexualCellsAlive() {

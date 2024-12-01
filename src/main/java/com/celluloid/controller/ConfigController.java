@@ -1,6 +1,7 @@
 package com.celluloid.controller;
 
 import com.celluloid.Config;
+import com.celluloid.GameOfLife;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpHeaders;
@@ -21,8 +22,10 @@ import java.util.Map;
 @RequestMapping(value = "/config")
 public class ConfigController {
     private final Config config;
+    private final GameOfLife gameOfLife;
 
-    public ConfigController(Config config){
+    public ConfigController(Config config, GameOfLife gameOfLife) {
+        this.gameOfLife = gameOfLife;
         this.config=config;
     }
     @GetMapping()
@@ -60,12 +63,12 @@ public class ConfigController {
     @PostMapping
     public ResponseEntity<String> saveConfig(@RequestBody Config newConfig) {
 
-        config.setAsexualCellsCount(newConfig.getAsexualCellsCount());
+        /*config.setAsexualCellsCount(newConfig.getAsexualCellsCount());
         config.setSexualCellsCount(newConfig.getSexualCellsCount());
         config.setReproductionThreshold(newConfig.getReproductionThreshold());
         config.setTFullVariance(newConfig.getTFullVariance());
         config.setTFull(newConfig.getTFull());
-        config.setTStarve(newConfig.getTStarve());
+        config.setTStarve(newConfig.getTStarve());*/
 
         Yaml yaml = new Yaml(createDumperOptions());
         try(FileWriter writer = new FileWriter("src/main/resources/application.yml", false)) {

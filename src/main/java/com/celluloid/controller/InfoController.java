@@ -13,7 +13,7 @@ import java.util.Map;
 @RequestMapping("/info")
 public class InfoController {
 
-    private final GlobalGameStats globalState = GlobalGameStats.getInstance(); // Access the GlobalState singleton
+    private final GlobalGameStats globalState = GlobalGameStats.getInstance();
 
     @GetMapping("/stats")
     public Map<String, Object> getStats() {
@@ -21,7 +21,7 @@ public class InfoController {
                 "sexualCellsAlive", globalState.getSexualCellsAlive(),
                 "asexualCellsAlive", globalState.getAsexualCellsAlive(),
                 "cellsDied", globalState.getCellsDied(),
-                "foodUnitsAvailable", globalState.getTotalFood() // Assuming you have a method in GlobalState or another service for this
+                "foodUnitsAvailable", globalState.getTotalFood()
         );
     }
 }

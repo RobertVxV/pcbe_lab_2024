@@ -2,6 +2,7 @@ package com.celluloid;
 
 import com.celluloid.cell.AsexualCell;
 import com.celluloid.cell.SexualCell;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
@@ -10,6 +11,7 @@ import java.util.ArrayList;
 
 @Service
 public class GameOfLife {
+    private final GlobalGameStats globalState = GlobalGameStats.getInstance();
     private final FoodPool foodPool = new FoodPool();
     private final Watcher watcher = new Watcher(foodPool);
     private final Cupid cupid = new Cupid();
@@ -20,6 +22,7 @@ public class GameOfLife {
     private final Config config;
 
 
+    @Autowired
     public GameOfLife(Config config) {
         this.config = config;
 
@@ -68,5 +71,13 @@ public class GameOfLife {
             //thread.setName("AsexualCell_CREATED_BY_USER_" + (asexualCells.size() - 1));
             thread.start();
         }
+    }
+
+    public void addFoodUnits(int amount) {
+        foodPool.addFood(amount);
+        synchronized (watcher) {
+            watcher.notifyFoodAvailable();
+        }
+        globalState.addFood(amount);
     }
 }
