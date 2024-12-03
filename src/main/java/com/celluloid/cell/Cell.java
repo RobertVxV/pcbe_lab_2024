@@ -63,7 +63,8 @@ public abstract class Cell implements Runnable {
                         watcher.wait(100);
                     }
                 } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
+                    Thread.currentThread().interrupt(); // Properly handle interruption
+                    return false; // Exit the loop if interrupted
                 }
             }
         }
@@ -75,12 +76,18 @@ public abstract class Cell implements Runnable {
         try {
             Thread.sleep(fullTime);
         } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
+            Thread.currentThread().interrupt(); // Handle interruption during sleep
         }
     }
 
     protected void die() {
         alive = false;
         System.out.println(getName() + " has died.");
+    }
+
+    public void stopCell() {
+        alive = false;
+        Thread.currentThread().interrupt();  // Interrupt the current thread to stop waiting or sleeping
+        System.out.println(getName() + " is stopping.");
     }
 }

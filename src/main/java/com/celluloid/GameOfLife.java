@@ -51,13 +51,25 @@ public class GameOfLife {
         }
     }
 
+    public void stopSimulation() {
+        watcher.interrupt();
+        cupid.interrupt();
+
+        for (var cell : sexualCells) {
+            cell.stopCell();
+        }
+
+        for (var cell : asexualCells) {
+            cell.stopCell();
+        }
+    }
+
     public void addSexualCell(int count) {
         for (int i = 0; i < count; i++) {
             SexualCell cell = new SexualCell(foodPool, watcher, cupid, config, true);
             sexualCells.add(cell);
 
             Thread thread = new Thread(cell);
-            //thread.setName("SexualCell_CREATED_BY_USER_" + (sexualCells.size() - 1));
             thread.start();
         }
     }
@@ -68,7 +80,6 @@ public class GameOfLife {
             asexualCells.add(cell);
 
             Thread thread = new Thread(cell);
-            //thread.setName("AsexualCell_CREATED_BY_USER_" + (asexualCells.size() - 1));
             thread.start();
         }
     }

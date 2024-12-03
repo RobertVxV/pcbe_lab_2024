@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 
-import java.io.File;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Map;
@@ -26,8 +26,9 @@ public class ConfigController {
 
     public ConfigController(Config config, GameOfLife gameOfLife) {
         this.gameOfLife = gameOfLife;
-        this.config=config;
+        this.config = config;
     }
+
     @GetMapping()
     @Operation(
             summary = "Get configuration",
@@ -71,11 +72,10 @@ public class ConfigController {
         config.setTStarve(newConfig.getTStarve());*/
 
         Yaml yaml = new Yaml(createDumperOptions());
-        try(FileWriter writer = new FileWriter("src/main/resources/application.yml", false)) {
+        try (FileWriter writer = new FileWriter("src/main/resources/application.yml", false)) {
             yaml.dump(createConfigMap(newConfig), writer);
             return new ResponseEntity<>("Configuration updated!", HttpStatus.OK);
-        } catch (IOException e)
-        {
+        } catch (IOException e) {
             return new ResponseEntity<>("Failed to save configuration!", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -83,5 +83,50 @@ public class ConfigController {
     @PutMapping
     public ResponseEntity<String> updateConfig(@RequestBody Config newConfig) {
         return saveConfig(newConfig);
+    }
+
+    @PostMapping("/reset")
+    @Operation(
+            summary = "Reset configuration or update to new values",
+            description = "If a JSON body is provided, updates the application configuration in memory. If no body is provided, resets the configuration to values read from application.yml and writes to application.yml."
+    )
+    public Config resetConfig(@RequestBody(required = false) Config newConfig) {
+        if (newConfig != null) {
+            config.setAsexualCellsCount(newConfig.getAsexualCellsCount());
+            config.setSexualCellsCount(newConfig.getSexualCellsCount());
+            config.setReproductionThreshold(newConfig.getReproductionThreshold());
+            config.setTFull(newConfig.getTFull());
+            config.setTStarve(newConfig.getTStarve());
+            config.setTFullVariance(newConfig.getTFullVariance());
+
+            gameOfLife.stopSimulation();
+            gameOfLife.startSimulation();
+
+            return newConfig;
+        } else {
+            return resetToDefaults();
+        }
+    }
+
+    private Config resetToDefaults() {
+        Yaml yaml = new Yaml();
+        try (FileReader reader = new FileReader("src/main/resources/application.yml")) {
+            Map<String, Object> yamlData = yaml.load(reader);
+            Map<String, Object> gameOfLifeConfig = (Map<String, Object>) yamlData.get("gameoflife");
+
+            config.setAsexualCellsCount((Integer) gameOfLifeConfig.get("asexualCellsCount"));
+            config.setSexualCellsCount((Integer) gameOfLifeConfig.get("sexualCellsCount"));
+            config.setReproductionThreshold((Integer) gameOfLifeConfig.get("reproductionThreshold"));
+            config.setTFull((Integer) gameOfLifeConfig.get("tFull"));
+            config.setTStarve((Integer) gameOfLifeConfig.get("tStarve"));
+            config.setTFullVariance((Integer) gameOfLifeConfig.get("tFullVariance"));
+
+            gameOfLife.stopSimulation();
+            gameOfLife.startSimulation();
+
+            return config;
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to reset configuration!", e);
+        }
     }
 }
