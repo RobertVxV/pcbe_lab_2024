@@ -13,6 +13,7 @@ import java.util.ArrayList;
 public class GameOfLife {
     private final GlobalGameStats globalState = GlobalGameStats.getInstance();
     private final Watcher watcher;
+    private FoodPool foodPool;
     private final Cupid cupid = new Cupid();
 
     private final ArrayList<SexualCell> sexualCells = new ArrayList<>();
