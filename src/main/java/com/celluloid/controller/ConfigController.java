@@ -93,6 +93,7 @@ public class ConfigController {
     )
     public Config resetConfig(@RequestBody(required = false) Config newConfig) {
         if (newConfig != null) {
+            config.setStartFood(newConfig.getStartFood());
             config.setAsexualCellsCount(newConfig.getAsexualCellsCount());
             config.setSexualCellsCount(newConfig.getSexualCellsCount());
             config.setReproductionThreshold(newConfig.getReproductionThreshold());
