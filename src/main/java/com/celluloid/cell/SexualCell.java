@@ -2,7 +2,7 @@ package com.celluloid.cell;
 
 import com.celluloid.*;
 
-public class SexualCell extends Cell {
+public class    SexualCell extends Cell {
     private boolean isSeekingPartner = false;
     private Cupid cupid;
     private Config config;
