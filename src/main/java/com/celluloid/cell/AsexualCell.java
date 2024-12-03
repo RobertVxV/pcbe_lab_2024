@@ -9,11 +9,12 @@ public class AsexualCell extends Cell {
     private Config config;
     private boolean created_by_user;
     private final GlobalGameStats globalState = GlobalGameStats.getInstance();
+
     public AsexualCell(FoodPool foodPool, Watcher watcher, Config config, boolean created_by_user) {
         super(foodPool, watcher, config);
         this.config = config;
         this.created_by_user = created_by_user;
-       // globalState.incrementAsexualCellsAlive(3);
+        // globalState.incrementAsexualCellsAlive(3);
     }
 
     @Override

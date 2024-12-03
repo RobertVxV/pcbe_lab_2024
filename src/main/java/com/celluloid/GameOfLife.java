@@ -27,7 +27,7 @@ public class GameOfLife {
         FoodPool foodPool = new FoodPool(config.getStartFood());
         watcher = new Watcher(foodPool);
 
-        for (int i = 0; i <  config.getSexualCellsCount(); i++) {
+        for (int i = 0; i < config.getSexualCellsCount(); i++) {
             sexualCells.add(new SexualCell(foodPool, watcher, cupid, config, false));
         }
 
