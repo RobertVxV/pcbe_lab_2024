@@ -28,6 +28,7 @@ public abstract class Cell implements Runnable {
     }
 
     public abstract void reproduce();
+
     abstract public String getName();
 
     @Override

@@ -17,7 +17,8 @@ public class GlobalGameStats {
         private static final GlobalGameStats INSTANCE = new GlobalGameStats();
     }
 
-    private GlobalGameStats() {}
+    private GlobalGameStats() {
+    }
 
     public static GlobalGameStats getInstance() {
         return SingletonHelper.INSTANCE;

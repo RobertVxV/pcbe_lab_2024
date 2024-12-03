@@ -21,16 +21,12 @@ public class AddFood {
     }
 
     @PostMapping
-    public ResponseEntity<String> addFood(@RequestBody Map<String, Object> body)
-    {
+    public ResponseEntity<String> addFood(@RequestBody Map<String, Object> body) {
         int numberOfFoodUnits = (int) body.get("units");
 
-        if (numberOfFoodUnits > 0)
-        {
+        if (numberOfFoodUnits > 0) {
             gameOfLife.addFoodUnits(numberOfFoodUnits);
-        }
-        else
-        {
+        } else {
             return ResponseEntity.badRequest().body("Invalid food unit amount: " + numberOfFoodUnits);
         }
 

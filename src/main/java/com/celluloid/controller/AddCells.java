@@ -28,18 +28,13 @@ public class AddCells {
         int count = (int) body.get("count");
 
 
-        if("sexual".equalsIgnoreCase(type))
-        {
+        if ("sexual".equalsIgnoreCase(type)) {
             gameOfLife.addSexualCell(count);
             globalState.incrementSexualCellsAlive(count);
-        }
-        else if ("asexual".equalsIgnoreCase(type))
-        {
+        } else if ("asexual".equalsIgnoreCase(type)) {
             gameOfLife.addAsexualCell(count);
             globalState.incrementAsexualCellsAlive(count);
-        }
-        else
-        {
+        } else {
             return ResponseEntity.badRequest().body("Invalid cell type: " + type);
         }
 

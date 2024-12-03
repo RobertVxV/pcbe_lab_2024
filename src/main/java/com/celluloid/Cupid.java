@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 import java.util.LinkedList;
 
 @Service
-public class Cupid extends Thread{
+public class Cupid extends Thread {
 
     private final LinkedList<SexualCell> waitingCells = new LinkedList<>();
 
@@ -18,8 +18,7 @@ public class Cupid extends Thread{
     }
 
     @Override
-    public void run()
-    {
+    public void run() {
         synchronized (waitingCells) {
             while (waitingCells.size() < 2) {
                 try {
