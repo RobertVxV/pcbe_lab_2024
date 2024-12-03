@@ -1,7 +1,15 @@
 gameoflife:
+  startFood: 10
   reproductionThreshold: 10
-  tFull: 1000
-  tFullVariance: 500
-  sexualCellsCount: 5
-  tStarve: 2000
   asexualCellsCount: 6
+  tStarve: 2000
+  sexualCellsCount: 5
+  tFullVariance: 600
+  tFull: 1000
+
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui.html #http://localhost:8080/swagger-ui.html
