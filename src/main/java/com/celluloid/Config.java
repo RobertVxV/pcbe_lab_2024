@@ -13,14 +13,14 @@ public class Config {
     @JsonProperty("reproductionThreshold")
     private int reproductionThreshold;
 
-    @JsonProperty("tFull")
-    private int tFull;
+    @JsonProperty("timeFull")
+    private int timeFull;
 
-    @JsonProperty("tStarve")
-    private int tStarve;
+    @JsonProperty("timeStarve")
+    private int timeStarve;
 
-    @JsonProperty("tFullVariance")
-    private int tFullVariance;
+    @JsonProperty("timeFullVariance")
+    private int timeFullVariance;
 
     @JsonProperty("sexualCellsCount")
     private int sexualCellsCount;
@@ -28,11 +28,17 @@ public class Config {
     @JsonProperty("asexualCellsCount")
     private int asexualCellsCount;
 
+    @JsonProperty("foodAmountAfterDeath")
+    private int foodAmountAfterDeath;
+
     public int getStartFood() {
         return startFood;
     }
 
-    // Getters and setters
+    public void setStartFood(int startFood) {
+        this.startFood = startFood;
+    }
+
     public int getReproductionThreshold() {
         return reproductionThreshold;
     }
@@ -41,32 +47,28 @@ public class Config {
         this.reproductionThreshold = reproductionThreshold;
     }
 
-    public int getTFull() {
-        return tFull;
+    public int getTimeFull() {
+        return timeFull;
     }
 
-    public void setTFull(int tFull) {
-        this.tFull = tFull;
+    public void setTimeFull(int timeFull) {
+        this.timeFull = timeFull;
     }
 
-    public int getTStarve() {
-        return tStarve;
+    public int getTimeStarve() {
+        return timeStarve;
     }
 
-    public void setStartFood(int startFood) {
-        this.startFood = startFood;
+    public void setTimeStarve(int timeStarve) {
+        this.timeStarve = timeStarve;
     }
 
-    public void setTStarve(int tStarve) {
-        this.tStarve = tStarve;
+    public int getTimeFullVariance() {
+        return timeFullVariance;
     }
 
-    public int getTFullVariance() {
-        return tFullVariance;
-    }
-
-    public void setTFullVariance(int tFullVariance) {
-        this.tFullVariance = tFullVariance;
+    public void setTimeFullVariance(int timeFullVariance) {
+        this.timeFullVariance = timeFullVariance;
     }
 
     public int getSexualCellsCount() {
@@ -83,5 +85,13 @@ public class Config {
 
     public void setAsexualCellsCount(int asexualCellsCount) {
         this.asexualCellsCount = asexualCellsCount;
+    }
+
+    public int getFoodAmountAfterDeath() {
+        return foodAmountAfterDeath;
+    }
+
+    public void setFoodAmountAfterDeath(int foodAmountAfterDeath) {
+        this.foodAmountAfterDeath = foodAmountAfterDeath;
     }
 }

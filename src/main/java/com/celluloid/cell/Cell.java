@@ -78,7 +78,7 @@ public abstract class Cell implements Runnable {
                 eventQueue.add(new Event(
                         this,
                         EventType.CELL_EATING,
-                        Instant.now().plusMillis(config.getTFull())
+                        Instant.now().plusMillis(config.getTimeFull())
                 ));
 
                 if (canReproduce()) {
@@ -92,7 +92,7 @@ public abstract class Cell implements Runnable {
             eventQueue.add(new Event(
                     this,
                     EventType.CELL_STARVING,
-                    Instant.now().plusMillis(config.getTStarve())
+                    Instant.now().plusMillis(config.getTimeStarve())
             ));
         }
 
@@ -111,12 +111,12 @@ public abstract class Cell implements Runnable {
     }
 
     private boolean isStarving() {
-        return Duration.between(lastMealTime, Instant.now()).toMillis() >= config.getTStarve();
+        return Duration.between(lastMealTime, Instant.now()).toMillis() >= config.getTimeStarve();
     }
 
     private boolean canEat() {
         return (mealsEaten == 0 ||
-                Duration.between(lastMealTime, Instant.now()).toMillis() > config.getTFull()
+                Duration.between(lastMealTime, Instant.now()).toMillis() > config.getTimeFull()
         ) && foodPool.getTotalFood() > 0;
     }
 
@@ -140,10 +140,9 @@ public abstract class Cell implements Runnable {
 
     private void addFoodToPoolAfterDeath() {
         Random rand = new Random();
-        int foodToAdd = rand.nextInt(5) + 1;
+        int foodToAdd = rand.nextInt(config.getFoodAmountAfterDeath()) + 1;
         foodPool.addFood(foodToAdd);
-        System.out.printf("%s has died and %d food has been added to the pool.%n",
-                getName(), foodToAdd);
+        System.out.printf("%d food has been added to the pool.%n", foodToAdd);
     }
 
     public void stopCell() {

@@ -39,8 +39,10 @@ public class SexualCell extends Cell {
                 cellsSeekingPartner.remove(partner);
             }
             else {
-                System.out.println(this.getName() + " is seeking a partner to reproduce.");
-                cellsSeekingPartner.add(this);
+                if (!cellsSeekingPartner.contains(this)) {
+                    System.out.println(this.getName() + " is seeking a partner to reproduce.");
+                    cellsSeekingPartner.add(this);
+                }
             }
         }
     }

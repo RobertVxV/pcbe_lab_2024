@@ -55,9 +55,9 @@ public class ConfigController {
                 "gameoflife", Map.of(
                         "startFood", config.getStartFood(),
                         "reproductionThreshold", config.getReproductionThreshold(),
-                        "tFull", config.getTFull(),
-                        "tStarve", config.getTStarve(),
-                        "tFullVariance", config.getTFullVariance(),
+                        "tFull", config.getTimeFull(),
+                        "tStarve", config.getTimeStarve(),
+                        "tFullVariance", config.getTimeFullVariance(),
                         "sexualCellsCount", config.getSexualCellsCount(),
                         "asexualCellsCount", config.getAsexualCellsCount()
                 )
@@ -100,9 +100,9 @@ public class ConfigController {
             config.setAsexualCellsCount(newConfig.getAsexualCellsCount());
             config.setSexualCellsCount(newConfig.getSexualCellsCount());
             config.setReproductionThreshold(newConfig.getReproductionThreshold());
-            config.setTFull(newConfig.getTFull());
-            config.setTStarve(newConfig.getTStarve());
-            config.setTFullVariance(newConfig.getTFullVariance());
+            config.setTimeFull(newConfig.getTimeFull());
+            config.setTimeStarve(newConfig.getTimeStarve());
+            config.setTimeFullVariance(newConfig.getTimeFullVariance());
 
             gameOfLife.stopSimulation();
             gameOfLife.startSimulation();
@@ -122,9 +122,9 @@ public class ConfigController {
             config.setAsexualCellsCount((Integer) gameOfLifeConfig.get("asexualCellsCount"));
             config.setSexualCellsCount((Integer) gameOfLifeConfig.get("sexualCellsCount"));
             config.setReproductionThreshold((Integer) gameOfLifeConfig.get("reproductionThreshold"));
-            config.setTFull((Integer) gameOfLifeConfig.get("tFull"));
-            config.setTStarve((Integer) gameOfLifeConfig.get("tStarve"));
-            config.setTFullVariance((Integer) gameOfLifeConfig.get("tFullVariance"));
+            config.setTimeFull((Integer) gameOfLifeConfig.get("tFull"));
+            config.setTimeStarve((Integer) gameOfLifeConfig.get("tStarve"));
+            config.setTimeFullVariance((Integer) gameOfLifeConfig.get("tFullVariance"));
 
             gameOfLife.stopSimulation();
             gameOfLife.startSimulation();
