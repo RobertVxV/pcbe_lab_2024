@@ -2,7 +2,6 @@ package com.celluloid.event;
 
 import com.celluloid.cell.Cell;
 import jakarta.annotation.Nonnull;
-import org.springframework.lang.NonNull;
 
 import java.time.Instant;
 
@@ -13,7 +12,7 @@ public record Event(
     implements Comparable<Event> {
 
     @Override
-    public int compareTo(@NonNull Event event) {
+    public int compareTo(@Nonnull Event event) {
         if (this.timestamp.isBefore(event.timestamp)) {
             return -1;
         }

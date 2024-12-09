@@ -14,7 +14,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public abstract class Cell implements Runnable {
     private static final AtomicInteger cellCounter = new AtomicInteger(0);
 
-    private final Config config;
+    protected final Config config;
     protected final EventQueue eventQueue;
     protected final FoodPool foodPool;
 
@@ -39,7 +39,7 @@ public abstract class Cell implements Runnable {
     @Override
     public void run() {
         while (alive) {
-            Event event = null;
+            Event event;
             var actionPending = false;
 
             synchronized (eventQueue) {

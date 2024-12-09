@@ -12,7 +12,6 @@ import java.util.ArrayList;
 @Service
 public class GameOfLife {
     private final FoodPool foodPool = new FoodPool();
-    private final Cupid cupid = new Cupid();
     private final EventQueue eventQueue = new EventQueue();
 
     private final ArrayList<SexualCell> sexualCells = new ArrayList<>();
@@ -24,7 +23,7 @@ public class GameOfLife {
         this.config = config;
 
         for (int i = 0; i <  config.getSexualCellsCount(); i++) {
-            sexualCells.add(new SexualCell(foodPool, eventQueue, cupid, config));
+            sexualCells.add(new SexualCell(foodPool, eventQueue, config));
         }
 
         for (int i = 0; i < config.getAsexualCellsCount(); i++) {
@@ -34,7 +33,6 @@ public class GameOfLife {
 
     @EventListener(ApplicationReadyEvent.class)
     public void startSimulation() {
-//        cupid.start();
         Thread eventQueueThread = new Thread(eventQueue);
         eventQueueThread.start();
 

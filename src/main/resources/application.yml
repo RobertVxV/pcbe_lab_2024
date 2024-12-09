@@ -3,5 +3,5 @@ gameoflife:
   t-full: 1000
   t-starve: 2000
   t-full-variance: 500
-  sexual-cells-count: 0
+  sexual-cells-count: 5
   asexual-cells-count: 5

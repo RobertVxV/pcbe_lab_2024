@@ -48,7 +48,6 @@ public class EventQueue implements Runnable {
                 if (millisUntilNextEvent <= 0) {
                     notifyAll();
                 }
-                System.out.printf("%d dead cells, %d future events%n", deadCells.size(), queue.size());
 
                 try {
                     wait(50);
@@ -81,12 +80,7 @@ public class EventQueue implements Runnable {
         synchronized (this) {
             synchronized (deadCells) {
                 while (!queue.isEmpty() && deadCells.contains(queue.peek().targetCell().getName())) {
-                    var event = queue.poll();
-                    System.out.printf(
-                            "removed %s event for dead cell %s%n",
-                            event.type(),
-                            event.targetCell().getName()
-                    );
+                    queue.poll();
                 }
             }
         }
