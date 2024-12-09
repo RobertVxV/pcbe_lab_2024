@@ -1,13 +1,19 @@
 package com.celluloid;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.concurrent.Semaphore;
 
 @Service
 public class FoodPool {
-    private int totalFood = 50; // Initial amount, configurable later
+    private int totalFood;
     private final Semaphore semaphore = new Semaphore(1);
+
+    public FoodPool(@Value("${gameoflife.startFood}") int startFood) {
+        this.totalFood = startFood;
+    }
 
     public int consumeFood(int amount) {
         int foodConsumed = 0;

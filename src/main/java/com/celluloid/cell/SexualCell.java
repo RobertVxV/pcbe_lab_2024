@@ -2,7 +2,7 @@ package com.celluloid.cell;
 
 import com.celluloid.Config;
 import com.celluloid.FoodPool;
-import com.celluloid.GlobalState;
+import com.celluloid.GlobalGameStats;
 import com.celluloid.event.EventQueue;
 import jakarta.annotation.Nonnull;
 
@@ -11,10 +11,10 @@ import java.util.Set;
 
 public class SexualCell extends Cell {
     private static final Set<SexualCell> cellsSeekingPartner = new HashSet<>();
-    private final GlobalState globalState = GlobalState.getInstance();
+    private final GlobalGameStats globalState = GlobalGameStats.getInstance();
 
-    public SexualCell(FoodPool foodPool, EventQueue eventQueue, Config config) {
-        super(foodPool, eventQueue, config);
+    public SexualCell(FoodPool foodPool, EventQueue eventQueue, Config config, boolean createdByUser) {
+        super(foodPool, eventQueue, config, createdByUser);
     }
 
     private static SexualCell findPartnerFor(Cell cell) {
@@ -47,12 +47,12 @@ public class SexualCell extends Cell {
 
     @Override
     public String getName() {
-        return "SexualCell_" + cellIndex;
+        return (createdByUser) ? "SexualCell_CREATED_BY_USER_" + cellIndex : "SexualCell_" + cellIndex;
     }
 
     private synchronized void makeChildWith(@Nonnull SexualCell partner) {
         System.out.println(this.getName() + " found a partner: " + partner.getName());
-        SexualCell child = new SexualCell(foodPool, eventQueue, config);
+        SexualCell child = new SexualCell(foodPool, eventQueue, config, false);
         Thread thread = new Thread(child);
         thread.start();
 

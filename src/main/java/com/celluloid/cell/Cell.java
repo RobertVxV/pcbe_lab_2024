@@ -2,7 +2,7 @@ package com.celluloid.cell;
 
 import com.celluloid.Config;
 import com.celluloid.FoodPool;
-import com.celluloid.GlobalState;
+import com.celluloid.GlobalGameStats;
 import com.celluloid.event.Event;
 import com.celluloid.event.EventQueue;
 import com.celluloid.event.EventType;
@@ -20,17 +20,19 @@ public abstract class Cell implements Runnable {
     protected final FoodPool foodPool;
 
     protected final int cellIndex;
-    private final GlobalState globalState = GlobalState.getInstance();
+    protected final boolean createdByUser;
+    private final GlobalGameStats globalState = GlobalGameStats.getInstance();
 
     protected int mealsEaten = 0;
     protected boolean alive = true;
     protected Instant lastMealTime = Instant.now();
 
-    public Cell(FoodPool foodPool, EventQueue eventQueue, Config config) {
+    public Cell(FoodPool foodPool, EventQueue eventQueue, Config config, boolean createdByUser) {
         this.config = config;
         this.foodPool = foodPool;
         this.eventQueue = eventQueue;
         this.cellIndex = cellCounter.getAndIncrement();
+        this.createdByUser = createdByUser;
 
         eventQueue.add(new Event(this, EventType.CELL_EATING, Instant.now()));
     }
@@ -142,5 +144,10 @@ public abstract class Cell implements Runnable {
         foodPool.addFood(foodToAdd);
         System.out.printf("%s has died and %d food has been added to the pool.%n",
                 getName(), foodToAdd);
+    }
+
+    public void stopCell() {
+        alive = false;
+        System.out.println(getName() + " is stopping.");
     }
 }

@@ -1,7 +1,6 @@
 package com.celluloid.controller;
 
-import com.celluloid.GlobalState;
-import com.celluloid.Watcher;
+import com.celluloid.GlobalGameStats;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,7 +13,7 @@ import java.util.Map;
 @RequestMapping("/info")
 public class InfoController {
 
-    private final GlobalState globalState = GlobalState.getInstance(); // Access the GlobalState singleton
+    private final GlobalGameStats globalState = GlobalGameStats.getInstance();
 
     @GetMapping("/stats")
     public Map<String, Object> getStats() {
@@ -22,7 +21,7 @@ public class InfoController {
                 "sexualCellsAlive", globalState.getSexualCellsAlive(),
                 "asexualCellsAlive", globalState.getAsexualCellsAlive(),
                 "cellsDied", globalState.getCellsDied(),
-                "foodUnitsAvailable", globalState.getTotalFood() // Assuming you have a method in GlobalState or another service for this
+                "foodUnitsAvailable", globalState.getTotalFood()
         );
     }
 }

@@ -5,21 +5,22 @@ import org.springframework.stereotype.Component;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Component
-public class GlobalState {
-    private static GlobalState instance;
+public class GlobalGameStats {
+    private static GlobalGameStats instance;
 
     private AtomicInteger sexualCellsAlive = new AtomicInteger(4);
     private AtomicInteger asexualCellsAlive = new AtomicInteger(3);
     private AtomicInteger cellsDied = new AtomicInteger(0);
-    private AtomicInteger totalFood = new AtomicInteger(50);
+    private AtomicInteger totalFood = new AtomicInteger(100);
 
     private static class SingletonHelper {
-        private static final GlobalState INSTANCE = new GlobalState();
+        private static final GlobalGameStats INSTANCE = new GlobalGameStats();
     }
 
-    private GlobalState() {}
+    private GlobalGameStats() {
+    }
 
-    public static GlobalState getInstance() {
+    public static GlobalGameStats getInstance() {
         return SingletonHelper.INSTANCE;
     }
 
@@ -29,7 +30,6 @@ public class GlobalState {
 
     public void incrementSexualCellsAlive(int amount) {
         int newCount = sexualCellsAlive.addAndGet(amount);
-        System.out.println("Sexual Cells Alive: " + newCount);
     }
 
     public void decrementSexualCellsAlive() {
