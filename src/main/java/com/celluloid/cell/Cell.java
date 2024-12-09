@@ -1,8 +1,8 @@
 package com.celluloid.cell;
 
+import com.celluloid.CellRegister;
 import com.celluloid.Config;
 import com.celluloid.FoodPool;
-import com.celluloid.GlobalGameStats;
 import com.celluloid.event.Event;
 import com.celluloid.event.EventQueue;
 import com.celluloid.event.EventType;
@@ -18,21 +18,25 @@ public abstract class Cell implements Runnable {
     protected final Config config;
     protected final EventQueue eventQueue;
     protected final FoodPool foodPool;
+    protected final CellRegister cellRegister;
 
-    protected final int cellIndex;
-    protected final boolean createdByUser;
-    private final GlobalGameStats globalState = GlobalGameStats.getInstance();
-
-    protected int mealsEaten = 0;
     protected boolean alive = true;
+    protected final int cellIndex;
+    protected int mealsEaten = 0;
     protected Instant lastMealTime = Instant.now();
 
-    public Cell(FoodPool foodPool, EventQueue eventQueue, Config config, boolean createdByUser) {
+    public Cell(
+            FoodPool foodPool,
+            EventQueue eventQueue,
+            Config config,
+            CellRegister cellRegister,
+            boolean createdByUser
+    ) {
         this.config = config;
         this.foodPool = foodPool;
         this.eventQueue = eventQueue;
+        this.cellRegister = cellRegister;
         this.cellIndex = cellCounter.getAndIncrement();
-        this.createdByUser = createdByUser;
 
         eventQueue.add(new Event(this, EventType.CELL_EATING, Instant.now()));
     }
@@ -73,8 +77,6 @@ public abstract class Cell implements Runnable {
         if (event.type() == EventType.CELL_EATING) {
             if (canEat()) {
                 eat();
-                globalState.consumeFood(1);
-
                 eventQueue.add(new Event(
                         this,
                         EventType.CELL_EATING,
@@ -101,7 +103,7 @@ public abstract class Cell implements Runnable {
         else if (event.type() == EventType.CELL_STARVING) {
             if (isStarving()) {
                 die();
-                eventQueue.addDeadCell(this);
+                cellRegister.registerDeadCell(this);
             }
         }
 
@@ -135,7 +137,7 @@ public abstract class Cell implements Runnable {
 
     protected void die() {
         alive = false;
-        eventQueue.addDeadCell(this);
+        cellRegister.registerDeadCell(this);
         addFoodToPoolAfterDeath();
         System.out.println(getName() + " has died.");
     }
@@ -147,7 +149,7 @@ public abstract class Cell implements Runnable {
         System.out.printf("%d food has been added to the pool.%n", foodToAdd);
     }
 
-    public void stopCell() {
+    public void endThread() {
         alive = false;
         System.out.println(getName() + " is stopping.");
     }

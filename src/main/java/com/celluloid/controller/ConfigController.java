@@ -104,7 +104,7 @@ public class ConfigController {
             config.setTimeStarve(newConfig.getTimeStarve());
             config.setTimeFullVariance(newConfig.getTimeFullVariance());
 
-            gameOfLife.stopSimulation();
+            gameOfLife.endSimulation();
             gameOfLife.startSimulation();
 
             return newConfig;
@@ -126,7 +126,7 @@ public class ConfigController {
             config.setTimeStarve((Integer) gameOfLifeConfig.get("tStarve"));
             config.setTimeFullVariance((Integer) gameOfLifeConfig.get("tFullVariance"));
 
-            gameOfLife.stopSimulation();
+            gameOfLife.endSimulation();
             gameOfLife.startSimulation();
 
             return config;

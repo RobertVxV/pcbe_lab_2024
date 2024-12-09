@@ -1,7 +1,9 @@
 package com.celluloid.controller;
 
-import com.celluloid.GlobalGameStats;
+import com.celluloid.CellRegister;
+import com.celluloid.FoodPool;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -13,15 +15,17 @@ import java.util.Map;
 @RequestMapping("/info")
 public class InfoController {
 
-    private final GlobalGameStats globalState = GlobalGameStats.getInstance();
-
+    @Autowired
     @GetMapping("/stats")
-    public Map<String, Object> getStats() {
+    public Map<String, Object> getStats(
+            FoodPool foodPool,
+            CellRegister cellRegister
+    ) {
         return Map.of(
-                "sexualCellsAlive", globalState.getSexualCellsAlive(),
-                "asexualCellsAlive", globalState.getAsexualCellsAlive(),
-                "cellsDied", globalState.getCellsDied(),
-                "foodUnitsAvailable", globalState.getTotalFood()
+                "sexualCellsAlive", cellRegister.getSexualCellCount(),
+                "asexualCellsAlive", cellRegister.getAsexualCellCount(),
+                "cellsDied", cellRegister.getDeadCellCount(),
+                "foodUnitsAvailable", foodPool.getTotalFood()
         );
     }
 }

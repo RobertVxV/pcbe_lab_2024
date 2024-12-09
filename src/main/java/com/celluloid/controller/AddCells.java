@@ -1,7 +1,6 @@
 package com.celluloid.controller;
 
 import com.celluloid.GameOfLife;
-import com.celluloid.GlobalGameStats;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -14,7 +13,6 @@ import java.util.Map;
 @RequestMapping(value = "/cells")
 public class AddCells {
 
-    private final GlobalGameStats globalState = GlobalGameStats.getInstance();
 
     private final GameOfLife gameOfLife;
 
@@ -27,13 +25,10 @@ public class AddCells {
         String type = (String) body.get("type");
         int count = (int) body.get("count");
 
-
         if ("sexual".equalsIgnoreCase(type)) {
-            gameOfLife.addSexualCell(count);
-            globalState.incrementSexualCellsAlive(count);
+            gameOfLife.addSexualCells(count);
         } else if ("asexual".equalsIgnoreCase(type)) {
-            gameOfLife.addAsexualCell(count);
-            globalState.incrementAsexualCellsAlive(count);
+            gameOfLife.addAsexualCells(count);
         } else {
             return ResponseEntity.badRequest().body("Invalid cell type: " + type);
         }

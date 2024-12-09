@@ -1,19 +1,31 @@
 package com.celluloid.event;
 
-import com.celluloid.cell.Cell;
+import com.celluloid.DeadCellRegister;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.time.Duration;
 import java.time.Instant;
-import java.util.HashSet;
 import java.util.PriorityQueue;
-import java.util.Set;
 
-public class EventQueue implements Runnable {
+@Service
+public class EventQueue {
     private final PriorityQueue<Event> queue = new PriorityQueue<>();
     private boolean running = true;
-    private final Set<String> deadCells = new HashSet<>();
+    private final DeadCellRegister deadCells;
 
-    public EventQueue() {
+    @Autowired
+    public EventQueue(DeadCellRegister deadCells) {
+        this.deadCells = deadCells;
+    }
+
+    public void startThread() {
+        Thread thread = new Thread(this::run);
+        thread.start();
+    }
+
+    public void endThread() {
+        running = false;
     }
 
     public void add(Event event) {
@@ -26,8 +38,19 @@ public class EventQueue implements Runnable {
         }
     }
 
-    @Override
-    public void run() {
+    public Event front() {
+        synchronized (this) {
+            return queue.peek();
+        }
+    }
+
+    public void pop() {
+        synchronized (this) {
+            queue.poll();
+        }
+    }
+
+    private void run() {
         while (running) {
             synchronized (this) {
                 removeDeadCellEvents();
@@ -44,8 +67,6 @@ public class EventQueue implements Runnable {
 //                } catch (InterruptedException e) {
 //                    throw new RuntimeException(e);
 //                }
-//
-//                queue.notifyAll();
 
                 if (millisUntilNextEvent <= 0) {
                     notifyAll();
@@ -60,30 +81,10 @@ public class EventQueue implements Runnable {
         }
     }
 
-    public Event front() {
-        synchronized (this) {
-            return queue.peek();
-        }
-    }
-
-    public void pop() {
-        synchronized (this) {
-            queue.poll();
-        }
-    }
-
-    public void addDeadCell(Cell cell) {
-        synchronized (deadCells) {
-            deadCells.add(cell.getName());
-        }
-    }
-
     private void removeDeadCellEvents() {
         synchronized (this) {
-            synchronized (deadCells) {
-                while (!queue.isEmpty() && deadCells.contains(queue.peek().targetCell().getName())) {
-                    queue.poll();
-                }
+            while (!queue.isEmpty() && deadCells.contains(queue.peek().targetCell())) {
+                queue.poll();
             }
         }
     }
