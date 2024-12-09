@@ -2,6 +2,7 @@ package com.celluloid;
 
 import com.celluloid.cell.AsexualCell;
 import com.celluloid.cell.SexualCell;
+import com.celluloid.event.EventQueue;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
@@ -12,34 +13,31 @@ import java.util.ArrayList;
 @Service
 public class GameOfLife {
     private final GlobalGameStats globalState = GlobalGameStats.getInstance();
-    private final Watcher watcher;
-    private FoodPool foodPool;
-    private final Cupid cupid = new Cupid();
+    private final FoodPool foodPool;
+    private final EventQueue eventQueue = new EventQueue();
+    private final Config config;
 
     private final ArrayList<SexualCell> sexualCells = new ArrayList<>();
     private final ArrayList<AsexualCell> asexualCells = new ArrayList<>();
 
-    private final Config config;
-
     @Autowired
     public GameOfLife(Config config) {
         this.config = config;
-        FoodPool foodPool = new FoodPool(config.getStartFood());
-        watcher = new Watcher(foodPool);
+        this.foodPool = new FoodPool(config.getStartFood());
 
         for (int i = 0; i < config.getSexualCellsCount(); i++) {
-            sexualCells.add(new SexualCell(foodPool, watcher, cupid, config, false));
+            sexualCells.add(new SexualCell(foodPool, eventQueue, config, false));
         }
 
         for (int i = 0; i < config.getAsexualCellsCount(); i++) {
-            asexualCells.add(new AsexualCell(foodPool, watcher, config, false));
+            asexualCells.add(new AsexualCell(foodPool, eventQueue, config, false));
         }
     }
 
     @EventListener(ApplicationReadyEvent.class)
     public void startSimulation() {
-        watcher.start();
-        cupid.start();
+        Thread eventQueueThread = new Thread(eventQueue);
+        eventQueueThread.start();
 
         for (var cell : sexualCells) {
             Thread thread = new Thread(cell);
@@ -53,9 +51,6 @@ public class GameOfLife {
     }
 
     public void stopSimulation() {
-        watcher.interrupt();
-        cupid.interrupt();
-
         for (var cell : sexualCells) {
             cell.stopCell();
         }
@@ -67,7 +62,7 @@ public class GameOfLife {
 
     public void addSexualCell(int count) {
         for (int i = 0; i < count; i++) {
-            SexualCell cell = new SexualCell(foodPool, watcher, cupid, config, true);
+            SexualCell cell = new SexualCell(foodPool, eventQueue, config, true);
             sexualCells.add(cell);
 
             Thread thread = new Thread(cell);
@@ -77,7 +72,7 @@ public class GameOfLife {
 
     public void addAsexualCell(int count) {
         for (int i = 0; i < count; i++) {
-            AsexualCell cell = new AsexualCell(foodPool, watcher, config, true);
+            AsexualCell cell = new AsexualCell(foodPool, eventQueue, config, true);
             asexualCells.add(cell);
 
             Thread thread = new Thread(cell);
@@ -87,9 +82,6 @@ public class GameOfLife {
 
     public void addFoodUnits(int amount) {
         foodPool.addFood(amount);
-        synchronized (watcher) {
-            watcher.notifyFoodAvailable();
-        }
         globalState.addFood(amount);
     }
 }

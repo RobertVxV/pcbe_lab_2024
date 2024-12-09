@@ -1,9 +1,9 @@
 gameoflife:
-  startFood: 10
-  reproductionThreshold: 10
-  asexualCellsCount: 6
-  tStarve: 2000
   sexualCellsCount: 5
+  asexualCellsCount: 6
+  reproductionThreshold: 10
+  startFood: 10
+  tStarve: 2000
   tFullVariance: 600
   tFull: 1000
 
