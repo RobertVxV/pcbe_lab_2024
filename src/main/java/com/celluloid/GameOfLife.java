@@ -21,9 +21,12 @@ public class GameOfLife {
     private final ArrayList<AsexualCell> asexualCells = new ArrayList<>();
 
     @Autowired
-    public GameOfLife(Config config) {
+    public GameOfLife(
+            Config config,
+            FoodPool foodPool
+    ) {
         this.config = config;
-        this.foodPool = new FoodPool(config.getStartFood());
+        this.foodPool = foodPool;
 
         for (int i = 0; i < config.getSexualCellsCount(); i++) {
             sexualCells.add(new SexualCell(foodPool, eventQueue, config, false));

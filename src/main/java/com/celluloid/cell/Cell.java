@@ -78,7 +78,9 @@ public abstract class Cell implements Runnable {
                 eventQueue.add(new Event(
                         this,
                         EventType.CELL_EATING,
-                        Instant.now().plusMillis(config.getTimeFull())
+                        Instant.now().plusMillis(
+                                config.getTimeFull() +
+                                        (int) (Math.random() * config.getTimeFullVariance()))
                 ));
 
                 if (canReproduce()) {
