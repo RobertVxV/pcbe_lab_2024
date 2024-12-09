@@ -2,6 +2,7 @@ package com.celluloid.cell;
 
 import com.celluloid.Config;
 import com.celluloid.FoodPool;
+import com.celluloid.GlobalState;
 import com.celluloid.event.Event;
 import com.celluloid.event.EventQueue;
 import com.celluloid.event.EventType;
@@ -19,6 +20,8 @@ public abstract class Cell implements Runnable {
     protected final FoodPool foodPool;
 
     protected final int cellIndex;
+    private final GlobalState globalState = GlobalState.getInstance();
+
     protected int mealsEaten = 0;
     protected boolean alive = true;
     protected Instant lastMealTime = Instant.now();
@@ -68,6 +71,8 @@ public abstract class Cell implements Runnable {
         if (event.type() == EventType.CELL_EATING) {
             if (canEat()) {
                 eat();
+                globalState.consumeFood(1);
+
                 eventQueue.add(new Event(
                         this,
                         EventType.CELL_EATING,

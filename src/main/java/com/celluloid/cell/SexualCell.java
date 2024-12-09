@@ -2,6 +2,7 @@ package com.celluloid.cell;
 
 import com.celluloid.Config;
 import com.celluloid.FoodPool;
+import com.celluloid.GlobalState;
 import com.celluloid.event.EventQueue;
 import jakarta.annotation.Nonnull;
 
@@ -10,6 +11,7 @@ import java.util.Set;
 
 public class SexualCell extends Cell {
     private static final Set<SexualCell> cellsSeekingPartner = new HashSet<>();
+    private final GlobalState globalState = GlobalState.getInstance();
 
     public SexualCell(FoodPool foodPool, EventQueue eventQueue, Config config) {
         super(foodPool, eventQueue, config);
@@ -53,5 +55,7 @@ public class SexualCell extends Cell {
         SexualCell child = new SexualCell(foodPool, eventQueue, config);
         Thread thread = new Thread(child);
         thread.start();
+
+        globalState.incrementSexualCellsAlive(1);
     }
 }

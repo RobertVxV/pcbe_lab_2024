@@ -37,6 +37,8 @@ public class EventQueue implements Runnable {
                     var firstTimestamp = queue.peek().timestamp();
                     millisUntilNextEvent = Duration.between(Instant.now(), firstTimestamp).toMillis();
                 }
+
+//                @TODO fix or remove
 //                try {
 //                    queue.wait(millisUntilNextEvent);
 //                } catch (InterruptedException e) {
