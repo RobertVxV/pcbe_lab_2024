@@ -21,7 +21,7 @@ public class EventQueue implements Runnable {
             return;
         }
 
-        synchronized (queue) {
+        synchronized (this) {
             queue.add(event);
         }
     }
@@ -32,41 +32,41 @@ public class EventQueue implements Runnable {
             synchronized (this) {
                 removeDeadCellEvents();
 
-                long deltaMillis = Integer.MAX_VALUE;
+                long millisUntilNextEvent = Integer.MAX_VALUE;
                 if (queue.peek() != null) {
                     var firstTimestamp = queue.peek().timestamp();
-                    deltaMillis = Duration.between(Instant.now(), firstTimestamp).toMillis();
+                    millisUntilNextEvent = Duration.between(Instant.now(), firstTimestamp).toMillis();
                 }
-
-                System.out.printf("queue size: %d%n", queue.size());
-
 //                try {
-//                    queue.wait(deltaMillis);
+//                    queue.wait(millisUntilNextEvent);
 //                } catch (InterruptedException e) {
 //                    throw new RuntimeException(e);
 //                }
 //
 //                queue.notifyAll();
-                if (deltaMillis <= 0) {
-                    this.notifyAll();
-                    try {
-                        wait(50);
-                    } catch (InterruptedException e) {
-                        throw new RuntimeException(e);
-                    }
+
+                if (millisUntilNextEvent <= 0) {
+                    notifyAll();
+                }
+                System.out.printf("%d dead cells, %d future events%n", deadCells.size(), queue.size());
+
+                try {
+                    wait(50);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
                 }
             }
         }
     }
 
     public Event front() {
-        synchronized (queue) {
+        synchronized (this) {
             return queue.peek();
         }
     }
 
     public void pop() {
-        synchronized (queue) {
+        synchronized (this) {
             queue.poll();
         }
     }
@@ -78,10 +78,16 @@ public class EventQueue implements Runnable {
     }
 
     private void removeDeadCellEvents() {
-        synchronized (deadCells) {
-            while (!queue.isEmpty() && deadCells.contains(queue.peek().cell().getName())) {
-                System.out.println("removed event for dead cell: " + queue.peek().cell().getName());
-                queue.poll();
+        synchronized (this) {
+            synchronized (deadCells) {
+                while (!queue.isEmpty() && deadCells.contains(queue.peek().targetCell().getName())) {
+                    var event = queue.poll();
+                    System.out.printf(
+                            "removed %s event for dead cell %s%n",
+                            event.type(),
+                            event.targetCell().getName()
+                    );
+                }
             }
         }
     }

@@ -4,6 +4,7 @@ import com.celluloid.Config;
 import com.celluloid.FoodPool;
 import com.celluloid.event.Event;
 import com.celluloid.event.EventQueue;
+import com.celluloid.event.EventType;
 
 import java.time.Duration;
 import java.time.Instant;
@@ -28,7 +29,7 @@ public abstract class Cell implements Runnable {
         this.eventQueue = eventQueue;
         this.cellIndex = cellCounter.getAndIncrement();
 
-        eventQueue.add(new Event(this, Instant.now()));
+        eventQueue.add(new Event(this, EventType.CELL_EATING, Instant.now()));
     }
 
     public abstract void reproduce();
@@ -38,53 +39,78 @@ public abstract class Cell implements Runnable {
     @Override
     public void run() {
         while (alive) {
-            boolean actionPending = false;
+            Event event = null;
+            var actionPending = false;
+
             synchronized (eventQueue) {
-                var event = eventQueue.front();
-                if (event != null) {
-                    if (event.cell() == this && event.timestamp().isBefore(Instant.now())) {
-                        eventQueue.pop();
-                        actionPending = true;
-                    }
+                event = eventQueue.front();
+                if (event != null && event.targetCell() == this &&
+                        event.timestamp().isBefore(Instant.now())
+                ) {
+                    actionPending = true;
+                    eventQueue.pop();
                 }
             }
+
             if (actionPending) {
-                performAction();
+                performAction(event);
             }
 
             synchronized (eventQueue) {
                 try {
                     eventQueue.wait();
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
+                } catch (InterruptedException ignored) {}
             }
         }
     }
 
-    private void performAction() {
-        if (isStarving()) {
-            die();
-        }
-        synchronized (foodPool) {
+    private void performAction(Event event) {
+        if (event.type() == EventType.CELL_EATING) {
             if (canEat()) {
                 eat();
-                eventQueue.add(new Event(this, Instant.now().plusMillis(config.getTFull())));
+                eventQueue.add(new Event(
+                        this,
+                        EventType.CELL_EATING,
+                        Instant.now().plusMillis(config.getTFull())
+                ));
+
+                if (canReproduce()) {
+                    eventQueue.add(new Event(
+                            this,
+                            EventType.CELL_REPRODUCING,
+                            Instant.now()
+                    ));
+                }
             }
-            eventQueue.add(new Event(this, Instant.now().plusMillis(config.getTStarve())));
+            eventQueue.add(new Event(
+                    this,
+                    EventType.CELL_STARVING,
+                    Instant.now().plusMillis(config.getTStarve())
+            ));
         }
-        if (canReproduce()) {
-            reproduce();
+
+        else if (event.type() == EventType.CELL_STARVING) {
+            if (isStarving()) {
+                die();
+                eventQueue.addDeadCell(this);
+            }
+        }
+
+        else if (event.type() == EventType.CELL_REPRODUCING) {
+            if (canReproduce()) {
+                reproduce();
+            }
         }
     }
 
     private boolean isStarving() {
-        return Duration.between(Instant.now(), lastMealTime).toMillis() >= config.getTStarve();
+        return Duration.between(lastMealTime, Instant.now()).toMillis() >= config.getTStarve();
     }
 
     private boolean canEat() {
-        return Duration.between(lastMealTime, Instant.now()).toMillis() >= config.getTFull() &&
-                foodPool.getTotalFood() > 0;
+        return (mealsEaten == 0 ||
+                Duration.between(lastMealTime, Instant.now()).toMillis() > config.getTFull()
+        ) && foodPool.getTotalFood() > 0;
     }
 
     private void eat() {

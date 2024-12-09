@@ -7,8 +7,8 @@ import org.springframework.lang.NonNull;
 import java.time.Instant;
 
 public record Event(
-        @Nonnull Cell cell,
-//        @Nonnull EventType type,
+        @Nonnull Cell targetCell,
+        @Nonnull EventType type,
         @Nonnull Instant timestamp)
     implements Comparable<Event> {
 
