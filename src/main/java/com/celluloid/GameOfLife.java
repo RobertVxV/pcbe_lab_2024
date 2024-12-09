@@ -2,6 +2,7 @@ package com.celluloid;
 
 import com.celluloid.cell.AsexualCell;
 import com.celluloid.cell.SexualCell;
+import com.celluloid.event.EventQueue;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
@@ -11,8 +12,8 @@ import java.util.ArrayList;
 @Service
 public class GameOfLife {
     private final FoodPool foodPool = new FoodPool();
-    private final Watcher watcher = new Watcher(foodPool);
     private final Cupid cupid = new Cupid();
+    private final EventQueue eventQueue = new EventQueue();
 
     private final ArrayList<SexualCell> sexualCells = new ArrayList<>();
     private final ArrayList<AsexualCell> asexualCells = new ArrayList<>();
@@ -23,18 +24,19 @@ public class GameOfLife {
         this.config = config;
 
         for (int i = 0; i <  config.getSexualCellsCount(); i++) {
-            sexualCells.add(new SexualCell(foodPool, watcher, cupid, config));
+            sexualCells.add(new SexualCell(foodPool, eventQueue, cupid, config));
         }
 
         for (int i = 0; i < config.getAsexualCellsCount(); i++) {
-            asexualCells.add(new AsexualCell(foodPool, watcher, config));
+            asexualCells.add(new AsexualCell(foodPool, eventQueue, config));
         }
     }
 
     @EventListener(ApplicationReadyEvent.class)
     public void startSimulation() {
-        watcher.start();
-        cupid.start();
+//        cupid.start();
+        Thread eventQueueThread = new Thread(eventQueue);
+        eventQueueThread.start();
 
         for (var cell : sexualCells) {
             Thread thread = new Thread(cell);

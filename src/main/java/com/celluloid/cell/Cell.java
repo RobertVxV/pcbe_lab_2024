@@ -2,67 +2,89 @@ package com.celluloid.cell;
 
 import com.celluloid.Config;
 import com.celluloid.FoodPool;
-import com.celluloid.Watcher;
+import com.celluloid.event.Event;
+import com.celluloid.event.EventQueue;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public abstract class Cell implements Runnable {
     private static final AtomicInteger cellCounter = new AtomicInteger(0);
 
-    protected final FoodPool foodPool;
-    protected final Watcher watcher;
     private final Config config;
+    protected final EventQueue eventQueue;
+    protected final FoodPool foodPool;
 
     protected final int cellIndex;
     protected int mealsEaten = 0;
     protected boolean alive = true;
     protected Instant lastMealTime = Instant.now();
 
-    public Cell(FoodPool foodPool, Watcher watcher, Config config) {
+    public Cell(FoodPool foodPool, EventQueue eventQueue, Config config) {
         this.config = config;
         this.foodPool = foodPool;
-        this.watcher = watcher;
+        this.eventQueue = eventQueue;
         this.cellIndex = cellCounter.getAndIncrement();
 
-        watcher.addCellToQueue(this, Instant.now());
+        eventQueue.add(new Event(this, Instant.now()));
     }
 
     public abstract void reproduce();
+
     public abstract String getName();
 
     @Override
     public void run() {
         while (alive) {
-            if (isStarving()) {
-                die();
-            }
-            synchronized (foodPool) {
-                if (canEat()) {
-                    eat();
+            boolean actionPending = false;
+            synchronized (eventQueue) {
+                var event = eventQueue.front();
+                if (event != null) {
+                    if (event.cell() == this && event.timestamp().isBefore(Instant.now())) {
+                        eventQueue.pop();
+                        actionPending = true;
+                    }
                 }
             }
-            if (canReproduce()) {
-                reproduce();
+            if (actionPending) {
+                performAction();
             }
 
-            synchronized (this) {
-                watcher.addCellToQueue(this, Instant.now().plusMillis(config.getTFull()));
+            synchronized (eventQueue) {
                 try {
-                    wait();
-                } catch (InterruptedException ignored) {}
+                    eventQueue.wait();
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
             }
         }
-        System.out.println(this.getName() + " has closed.");
+    }
+
+    private void performAction() {
+        if (isStarving()) {
+            die();
+        }
+        synchronized (foodPool) {
+            if (canEat()) {
+                eat();
+                eventQueue.add(new Event(this, Instant.now().plusMillis(config.getTFull())));
+            }
+            eventQueue.add(new Event(this, Instant.now().plusMillis(config.getTStarve())));
+        }
+        if (canReproduce()) {
+            reproduce();
+        }
     }
 
     private boolean isStarving() {
-        return Duration.between(Instant.now(), lastMealTime).toMillis() > config.getTStarve();
+        return Duration.between(Instant.now(), lastMealTime).toMillis() >= config.getTStarve();
     }
 
     private boolean canEat() {
-        return foodPool.getTotalFood() > 0;
+        return Duration.between(lastMealTime, Instant.now()).toMillis() >= config.getTFull() &&
+                foodPool.getTotalFood() > 0;
     }
 
     private void eat() {
@@ -78,7 +100,16 @@ public abstract class Cell implements Runnable {
 
     protected void die() {
         alive = false;
-        watcher.notifyCellDeath(this);
+        eventQueue.addDeadCell(this);
+        addFoodToPoolAfterDeath();
         System.out.println(getName() + " has died.");
+    }
+
+    private void addFoodToPoolAfterDeath() {
+        Random rand = new Random();
+        int foodToAdd = rand.nextInt(5) + 1;
+        foodPool.addFood(foodToAdd);
+        System.out.printf("%s has died and %d food has been added to the pool.%n",
+                getName(), foodToAdd);
     }
 }
