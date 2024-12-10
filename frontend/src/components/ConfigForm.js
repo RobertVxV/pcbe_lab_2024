@@ -1,29 +1,27 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import './ConfigForm.css';
+import './styles.css';
 
 const ConfigForm = () => {
     const [config, setConfig] = useState({
-        startFood: 100, // Default value
-        reproductionThreshold: 3, // Default value
-        timeFull: 1000, // Default value
-        timeFullVariance: 600, // Default value
-        timeStarve: 2000, // Default value
-        sexualCellsCount: 5, // Default value
-        asexualCellsCount: 6, // Default value
-        foodAmountAfterDeath: 5 // Default value
+        startFood: 100,
+        reproductionThreshold: 3,
+        timeFull: 1000,
+        timeFullVariance: 600,
+        timeStarve: 2000,
+        sexualCellsCount: 5,
+        asexualCellsCount: 6,
+        foodAmountAfterDeath: 5
     });
 
-    const [message, setMessage] = useState({ text: '', type: '' }); // Separate message text and type
+    const [message, setMessage] = useState({ text: '', type: '' });
 
-    // Fetch the current configuration from the backend
     useEffect(() => {
         axios.get('http://localhost:8080/config')
             .then(response => setConfig(response.data))
             .catch(error => console.error('Error fetching config:', error));
     }, []);
 
-    // Handle input field changes
     const handleChange = (e) => {
         const { name, value } = e.target;
         setConfig(prevConfig => ({
@@ -32,11 +30,10 @@ const ConfigForm = () => {
         }));
     };
 
-    // Handle form submission to save or update configuration
     const handleSubmit = (e, endpoint) => {
         e.preventDefault();
         axios.post(`http://localhost:8080/config${endpoint}`, config)
-            .then(response => {
+            .then(() => {
                 setMessage({
                     text: 'Configuration updated successfully!',
                     type: 'success'
@@ -48,18 +45,16 @@ const ConfigForm = () => {
             }));
     };
 
-    // Reset configuration to default values from the backend
     const handleReset = () => {
         axios.get('http://localhost:8080/config')
             .then(response => {
-                setConfig(response.data);  // Use the config fetched from the backend
+                setConfig(response.data);
                 setMessage({
                     text: 'Configuration reset successfully',
                     type: 'success'
                 });
             })
-            .catch(error => {
-                // If fetching from the backend fails, set default values
+            .catch(() => {
                 const defaultConfig = {
                     startFood: 100,
                     reproductionThreshold: 3,
@@ -70,15 +65,13 @@ const ConfigForm = () => {
                     asexualCellsCount: 6,
                     foodAmountAfterDeath: 5
                 };
-
-                setConfig(defaultConfig);  // Set the default values in case of error
+                setConfig(defaultConfig);
                 setMessage({
-                    text: `Error resetting configuration: ${error.response?.data || 'Request failed'}. Default values applied.`,
+                    text: 'Error resetting configuration. Default values applied.',
                     type: 'error'
                 });
             });
     };
-
 
     return (
         <div className="config-form-container">

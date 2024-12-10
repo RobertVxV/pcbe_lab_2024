@@ -1,0 +1,174 @@
+/* Global Styles */
+body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f0f0f0;
+    color: #333;
+}
+
+h1, h2 {
+    font-size: 1.8rem;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+h1 {
+    text-align: center;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    /*min-height: 20vh;*/
+}
+
+/* Form Elements */
+input[type="number"], select {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 1rem;
+    margin: 5px 0;
+    width: 200px;
+}
+
+button {
+    padding: 10px 15px;
+    border-radius: 4px;
+    font-size: 1rem;
+    cursor: pointer;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    margin-top: 10px;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+/* Message Styles */
+.message {
+    margin-top: 10px;
+    font-size: 1rem;
+    text-align: center;
+}
+
+.message.success {
+    color: green;
+}
+
+.message.error {
+    color: red;
+}
+
+/* Container for form groups with two-column layout */
+.config-form-group {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* Two equal columns */
+    align-items: center; /* Vertically align label and input */
+    gap: 15px; /* Space between label and input */
+    margin-bottom: 15px;
+}
+
+/* Styling for labels */
+.config-form-label {
+    font-size: 1rem;
+    color: #555;
+    text-align: left; /* Align labels to the right */
+    padding-right: 10px; /* Space between label text and input */
+}
+
+/* Styling for input fields */
+.config-form-input {
+    padding: 8px 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 1rem;
+}
+
+/* Buttons container */
+.config-form-buttons {
+    display: flex;
+    justify-content: space-between;
+    gap: 15px; /* Adds spacing between buttons */
+    margin-top: 20px;
+}
+
+/* Styling for buttons */
+.config-form-button {
+    background-color: #007bff;
+    color: white;
+    border: 1px solid #007bff;
+    border-radius: 5px;
+    padding: 10px 15px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    flex: 1; /* Ensure buttons stretch equally */
+}
+
+.config-form-button:hover {
+    background-color: #0056b3;
+}
+
+/* Message styling */
+.config-form-message {
+    margin-top: 15px;
+    font-size: 1rem;
+    text-align: center;
+}
+
+.config-form-message.success {
+    color: green;
+}
+
+.config-form-message.error {
+    color: red;
+}
+
+
+/* Center the form and style it */
+.config-form-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    /*justify-content: center;*/
+    min-height: 100vh;
+    background-color: #f9f9f9;
+    padding: 20px;
+}
+
+.config-form-title {
+    font-size: 2rem;
+    margin-bottom: 20px;
+    text-align: center;
+    color: #333;
+}
+
+.config-form {
+    background: #fff;
+    padding: 20px 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 500px;
+}
+
+.stats-viewer ul {
+    list-style: none;
+    padding: 0;
+}
+
+.stats-viewer li {
+    margin-bottom: 10px;
+}
+
+.stats-viewer li strong {
+    color: #333;
+}
