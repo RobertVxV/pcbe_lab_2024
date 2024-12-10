@@ -3,14 +3,13 @@ gameoflife:
   asexualCellsCount: 6
   reproductionThreshold: 3
   startFood: 100
-  timeStarve: 2000
-  timeFullVariance: 600
+  timeStarve: 1200
+  timeFullVariance: 400
   timeFull: 1000
   foodAmountAfterDeath: 5
-
 springdoc:
   api-docs:
     enabled: true
   swagger-ui:
     enabled: true
-    path: /swagger-ui.html #http://localhost:8080/swagger-ui.html
+    path: /swagger-ui.html
