@@ -2,11 +2,11 @@ gameoflife:
   sexualCellsCount: 5
   asexualCellsCount: 6
   reproductionThreshold: 3
-  startFood: 100
+  startFood: 11
   timeStarve: 2000
   timeFullVariance: 600
   timeFull: 1000
-  foodAmountAfterDeath: 1
+  foodAmountAfterDeath: 5
 springdoc:
   api-docs:
     enabled: true

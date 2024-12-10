@@ -23,14 +23,14 @@ public abstract class Cell implements Runnable {
     protected boolean alive = true;
     protected final int cellIndex;
     protected int mealsEaten = 0;
+    private boolean waitingToEat = false;
     protected Instant lastMealTime = Instant.now();
 
     public Cell(
             FoodPool foodPool,
             EventQueue eventQueue,
             Config config,
-            CellRegister cellRegister,
-            boolean createdByUser
+            CellRegister cellRegister
     ) {
         this.config = config;
         this.foodPool = foodPool;
@@ -74,24 +74,30 @@ public abstract class Cell implements Runnable {
     }
 
     private void performAction(Event event) {
-        if (event.type() == EventType.CELL_EATING) {
-            if (canEat()) {
-                eat();
-                eventQueue.add(new Event(
-                        this,
-                        EventType.CELL_EATING,
-                        Instant.now().plusMillis(
-                                config.getTimeFull() +
-                                        (int) (Math.random() * config.getTimeFullVariance()))
-                ));
-
-                if (canReproduce()) {
+        if (event.type() == EventType.CELL_EATING || waitingToEat) {
+            synchronized (foodPool) {
+                if (canEat()) {
+                    eat();
                     eventQueue.add(new Event(
                             this,
-                            EventType.CELL_REPRODUCING,
-                            Instant.now()
+                            EventType.CELL_EATING,
+                            Instant.now().plusMillis(
+                                    config.getTimeFull() +
+                                            (int) (Math.random() * config.getTimeFullVariance()))
                     ));
+
+                    if (canReproduce()) {
+                        eventQueue.add(new Event(
+                                this,
+                                EventType.CELL_REPRODUCING,
+                                Instant.now()
+                        ));
+                    }
                 }
+                else if (!isFoodAvailable() && isTimeToEat()) {
+                    waitingToEat = true;
+                }
+
             }
             eventQueue.add(new Event(
                     this,
@@ -100,14 +106,14 @@ public abstract class Cell implements Runnable {
             ));
         }
 
-        else if (event.type() == EventType.CELL_STARVING) {
+        if (event.type() == EventType.CELL_STARVING) {
             if (isStarving()) {
                 die();
                 cellRegister.registerDeadCell(this);
             }
         }
 
-        else if (event.type() == EventType.CELL_REPRODUCING) {
+        if (event.type() == EventType.CELL_REPRODUCING) {
             if (canReproduce()) {
                 reproduce();
             }
@@ -118,16 +124,26 @@ public abstract class Cell implements Runnable {
         return Duration.between(lastMealTime, Instant.now()).toMillis() >= config.getTimeStarve();
     }
 
+    private boolean isTimeToEat() {
+        return mealsEaten == 0 ||
+                Duration.between(lastMealTime, Instant.now()).toMillis() > config.getTimeFull();
+    }
+
+    private boolean isFoodAvailable() {
+        return foodPool.getTotalFood() > 0;
+    }
+
     private boolean canEat() {
-        return (mealsEaten == 0 ||
-                Duration.between(lastMealTime, Instant.now()).toMillis() > config.getTimeFull()
-        ) && foodPool.getTotalFood() > 0;
+        return isTimeToEat() && isFoodAvailable();
     }
 
     private void eat() {
         foodPool.consumeFood(1);
+
         mealsEaten++;
+        waitingToEat = false;
         lastMealTime = Instant.now();
+
         System.out.println(getName() + " ate food. Total meals: " + mealsEaten);
     }
 
@@ -139,6 +155,11 @@ public abstract class Cell implements Runnable {
         alive = false;
         cellRegister.registerDeadCell(this);
         addFoodToPoolAfterDeath();
+
+        synchronized (eventQueue) {
+            eventQueue.notifyAll();
+        }
+
         System.out.println(getName() + " has died.");
     }
 

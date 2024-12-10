@@ -64,7 +64,7 @@ public class CellRegister {
     }
 
     public void addSexualCell() {
-        SexualCell cell = new SexualCell(foodPool, eventQueue, config, this, false);
+        SexualCell cell = new SexualCell(foodPool, eventQueue, config, this);
         synchronized (sexualCells) {
             sexualCells.add(cell);
         }
@@ -74,7 +74,7 @@ public class CellRegister {
     }
 
     public void addAsexualCell() {
-        AsexualCell cell = new AsexualCell(foodPool, eventQueue, config, this, false);
+        AsexualCell cell = new AsexualCell(foodPool, eventQueue, config, this);
         synchronized (asexualCells) {
             asexualCells.add(cell);
         }
@@ -98,6 +98,17 @@ public class CellRegister {
     public void registerDeadCell(Cell cell) {
         synchronized (deadCells) {
             deadCells.registerDeadCell(cell);
+        }
+
+        if (cell instanceof AsexualCell) {
+            synchronized (asexualCells) {
+                asexualCells.remove(cell);
+            }
+        }
+        else if (cell instanceof SexualCell) {
+            synchronized (sexualCells) {
+                sexualCells.remove(cell);
+            }
         }
     }
 }

@@ -17,9 +17,8 @@ public class SexualCell extends Cell {
             FoodPool foodPool,
             EventQueue eventQueue,
             Config config,
-            CellRegister cellRegister,
-            boolean createdByUser) {
-        super(foodPool, eventQueue, config, cellRegister, createdByUser);
+            CellRegister cellRegister) {
+        super(foodPool, eventQueue, config, cellRegister);
     }
 
     private static SexualCell findPartnerFor(Cell cell) {
