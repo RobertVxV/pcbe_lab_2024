@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import './ConfigForm.css';
 
 const ConfigForm = () => {
     const [config, setConfig] = useState({
@@ -13,7 +14,7 @@ const ConfigForm = () => {
         foodAmountAfterDeath: 5 // Default value
     });
 
-    const [message, setMessage] = useState('');
+    const [message, setMessage] = useState({ text: '', type: '' }); // Separate message text and type
 
     // Fetch the current configuration from the backend
     useEffect(() => {
@@ -36,110 +37,72 @@ const ConfigForm = () => {
         e.preventDefault();
         axios.post(`http://localhost:8080/config${endpoint}`, config)
             .then(response => {
-                // Check if the response is an object and stringify if necessary
-                if (typeof response.data === 'object') {
-                    setMessage('Configuration updated successfully!');
-                } else {
-                    setMessage(response.data);
-                }
+                setMessage({
+                    text: 'Configuration updated successfully!',
+                    type: 'success'
+                });
             })
-            .catch(error => setMessage('Error: ' + (error.response?.data || 'Request failed')));
+            .catch(error => setMessage({
+                text: `Error: ${error.response?.data || 'Request failed'}`,
+                type: 'error'
+            }));
     };
-
 
     // Reset configuration to default values from the backend
     const handleReset = () => {
-        axios.post('http://localhost:8080/config/reset')
+        axios.get('http://localhost:8080/config')
             .then(response => {
-                setConfig(response.data);
-                setMessage('Configuration reset successfully');
+                setConfig(response.data);  // Use the config fetched from the backend
+                setMessage({
+                    text: 'Configuration reset successfully',
+                    type: 'success'
+                });
             })
-            .catch(error => setMessage('Error resetting configuration: ' + error.response?.data || 'Request failed'));
+            .catch(error => {
+                // If fetching from the backend fails, set default values
+                const defaultConfig = {
+                    startFood: 100,
+                    reproductionThreshold: 3,
+                    timeFull: 1000,
+                    timeFullVariance: 600,
+                    timeStarve: 2000,
+                    sexualCellsCount: 5,
+                    asexualCellsCount: 6,
+                    foodAmountAfterDeath: 5
+                };
+
+                setConfig(defaultConfig);  // Set the default values in case of error
+                setMessage({
+                    text: `Error resetting configuration: ${error.response?.data || 'Request failed'}. Default values applied.`,
+                    type: 'error'
+                });
+            });
     };
 
+
     return (
-        <div>
-            <h1>Application Configuration</h1>
-            <form>
-                <div>
-                    <label>Start Food: </label>
-                    <input
-                        type="number"
-                        name="startFood"
-                        value={config.startFood}
-                        onChange={handleChange}
-                    />
-                </div>
-                <div>
-                    <label>Reproduction Threshold: </label>
-                    <input
-                        type="number"
-                        name="reproductionThreshold"
-                        value={config.reproductionThreshold}
-                        onChange={handleChange}
-                    />
-                </div>
-                <div>
-                    <label>T Full: </label>
-                    <input
-                        type="number"
-                        name="timeFull"
-                        value={config.timeFull}
-                        onChange={handleChange}
-                    />
-                </div>
-                <div>
-                    <label>T Starve: </label>
-                    <input
-                        type="number"
-                        name="timeStarve"
-                        value={config.timeStarve}
-                        onChange={handleChange}
-                    />
-                </div>
-                <div>
-                    <label>T Full Variance: </label>
-                    <input
-                        type="number"
-                        name="timeFullVariance"
-                        value={config.timeFullVariance}
-                        onChange={handleChange}
-                    />
-                </div>
-                <div>
-                    <label>Sexual Cells Count: </label>
-                    <input
-                        type="number"
-                        name="sexualCellsCount"
-                        value={config.sexualCellsCount}
-                        onChange={handleChange}
-                    />
-                </div>
-                <div>
-                    <label>Asexual Cells Count: </label>
-                    <input
-                        type="number"
-                        name="asexualCellsCount"
-                        value={config.asexualCellsCount}
-                        onChange={handleChange}
-                    />
-                </div>
-                <div>
-                    <label>Food Amount After Death: </label>
-                    <input
-                        type="number"
-                        name="foodAmountAfterDeath"
-                        value={config.foodAmountAfterDeath}
-                        onChange={handleChange}
-                    />
-                </div>
-                <div>
-                    <button onClick={(e) => handleSubmit(e, '')}>Save Configuration</button>
-                    <button onClick={(e) => handleSubmit(e, '/reset')}>Update Configuration</button>
-                    <button type="button" onClick={handleReset}>Reset to Defaults</button>
+        <div className="config-form-container">
+            <h1 className="config-form-title">Application Configuration</h1>
+            <form className="config-form">
+                {Object.entries(config).map(([key, value]) => (
+                    <div className="config-form-group" key={key}>
+                        <label className="config-form-label">{key.replace(/([A-Z])/g, ' $1')}:</label>
+                        <input
+                            type="number"
+                            name={key}
+                            value={value}
+                            onChange={handleChange}
+                            className="config-form-input"
+                        />
+                    </div>
+                ))}
+                <div className="config-form-buttons">
+                    <button className="config-form-button" onClick={(e) => handleSubmit(e, '')}>Save Configuration</button>
+                    <button className="config-form-button" onClick={(e) => handleSubmit(e, '/reset')}>Update Configuration</button>
+                    <button className="config-form-button" type="button" onClick={handleReset}>Reset to Defaults</button>
                 </div>
             </form>
-            <p>{message}</p>
+            <p className={`config-form-message ${message.type}`}>{message.text}</p>
         </div>
     );
 };

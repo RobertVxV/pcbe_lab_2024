@@ -59,8 +59,6 @@ public class SexualCell extends Cell {
 
     private synchronized void makeChildWith(@Nonnull SexualCell partner) {
         System.out.println(this.getName() + " found a partner: " + partner.getName());
-        SexualCell child = new SexualCell(foodPool, eventQueue, config, cellRegister, false);
-        Thread thread = new Thread(child);
-        thread.start();
+        cellRegister.addSexualCell();
     }
 }

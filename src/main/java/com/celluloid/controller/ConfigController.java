@@ -4,6 +4,7 @@ import com.celluloid.Config;
 import com.celluloid.GameOfLife;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -27,9 +28,11 @@ import org.springframework.web.bind.annotation.RestController;
 @Tag(name = "Configuration", description = "Endpoints for accessing application configuration")
 @RequestMapping(value = "/config")
 public class ConfigController {
+
     private final Config config;
     private final GameOfLife gameOfLife;
 
+    @Autowired
     public ConfigController(Config config, GameOfLife gameOfLife) {
         this.gameOfLife = gameOfLife;
         this.config = config;
