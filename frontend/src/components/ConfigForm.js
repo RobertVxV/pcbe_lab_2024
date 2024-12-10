@@ -35,9 +35,17 @@ const ConfigForm = () => {
     const handleSubmit = (e, endpoint) => {
         e.preventDefault();
         axios.post(`http://localhost:8080/config${endpoint}`, config)
-            .then(response => setMessage(response.data))
-            .catch(error => setMessage('Error: ' + error.response?.data || 'Request failed'));
+            .then(response => {
+                // Check if the response is an object and stringify if necessary
+                if (typeof response.data === 'object') {
+                    setMessage('Configuration updated successfully!');
+                } else {
+                    setMessage(response.data);
+                }
+            })
+            .catch(error => setMessage('Error: ' + (error.response?.data || 'Request failed')));
     };
+
 
     // Reset configuration to default values from the backend
     const handleReset = () => {
