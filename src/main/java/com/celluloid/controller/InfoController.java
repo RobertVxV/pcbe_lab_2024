@@ -15,12 +15,20 @@ import java.util.Map;
 @RequestMapping("/info")
 public class InfoController {
 
+    private final FoodPool foodPool;
+    private final CellRegister cellRegister;
+
     @Autowired
-    @GetMapping("/stats")
-    public Map<String, Object> getStats(
+    public InfoController(
             FoodPool foodPool,
             CellRegister cellRegister
     ) {
+        this.foodPool = foodPool;
+        this.cellRegister = cellRegister;
+    }
+
+    @GetMapping("/stats")
+    public Map<String, Object> getStats() {
         return Map.of(
                 "sexualCellsAlive", cellRegister.getSexualCellCount(),
                 "asexualCellsAlive", cellRegister.getAsexualCellCount(),
