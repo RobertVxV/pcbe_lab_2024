@@ -20,11 +20,14 @@ public class EventQueue {
     }
 
     public void startThread() {
+        System.out.println("Starting event queue!");
+        running = true;
         Thread thread = new Thread(this::run);
         thread.start();
     }
 
     public void endThread() {
+        System.out.println("We ended the event queue");
         running = false;
     }
 

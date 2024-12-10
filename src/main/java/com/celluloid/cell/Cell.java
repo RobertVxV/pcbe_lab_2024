@@ -6,16 +6,20 @@ import com.celluloid.FoodPool;
 import com.celluloid.event.Event;
 import com.celluloid.event.EventQueue;
 import com.celluloid.event.EventType;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
 
+@Component
 public abstract class Cell implements Runnable {
     private static final AtomicInteger cellCounter = new AtomicInteger(0);
 
-    protected final Config config;
+
+    protected  Config config;
     protected final EventQueue eventQueue;
     protected final FoodPool foodPool;
     protected final CellRegister cellRegister;
@@ -25,12 +29,13 @@ public abstract class Cell implements Runnable {
     protected int mealsEaten = 0;
     protected Instant lastMealTime = Instant.now();
 
+    @Autowired
     public Cell(
             FoodPool foodPool,
             EventQueue eventQueue,
             Config config,
-            CellRegister cellRegister,
-            boolean createdByUser
+            CellRegister cellRegister
+            //boolean createdByUser
     ) {
         this.config = config;
         this.foodPool = foodPool;
@@ -152,5 +157,11 @@ public abstract class Cell implements Runnable {
     public void endThread() {
         alive = false;
         System.out.println(getName() + " is stopping.");
+    }
+
+    public void setAlive()
+    {
+        alive = true;
+        mealsEaten = 0;
     }
 }

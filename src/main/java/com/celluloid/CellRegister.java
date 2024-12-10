@@ -42,12 +42,16 @@ public class CellRegister {
     }
 
     public void startCellThreads() {
+        System.out.println("Starting cell threads again!");
+        System.out.println("SexualCells length:" + sexualCells.size());
         for (var cell : sexualCells) {
+            cell.setAlive();
             Thread thread = new Thread(cell);
             thread.start();
         }
 
         for (var cell : asexualCells) {
+            cell.setAlive();
             Thread thread = new Thread(cell);
             thread.start();
         }

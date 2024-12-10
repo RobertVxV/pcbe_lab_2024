@@ -19,7 +19,7 @@ public class SexualCell extends Cell {
             Config config,
             CellRegister cellRegister,
             boolean createdByUser) {
-        super(foodPool, eventQueue, config, cellRegister, createdByUser);
+        super(foodPool, eventQueue, config, cellRegister);
     }
 
     private static SexualCell findPartnerFor(Cell cell) {

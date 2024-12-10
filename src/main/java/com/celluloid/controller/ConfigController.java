@@ -99,6 +99,19 @@ public class ConfigController {
             summary = "Reset configuration or update to new values",
             description = "If a JSON body is provided, updates the application configuration in memory. If no body is provided, resets the configuration to values read from application.yml and writes to application.yml."
     )
+    public ResponseEntity<String> resetSimulation(){
+        try {
+            gameOfLife.restartSimulation();
+            return new ResponseEntity<>("Restarted simulation successfully!", HttpStatus.OK);
+        } catch (Exception e)
+        {
+            return new ResponseEntity<>("Failed to restart the simulation!", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+
+
+    /*
     public Config resetConfig(@RequestBody(required = false) Config newConfig) {
         if (newConfig != null) {
             config.setStartFood(newConfig.getStartFood());
@@ -141,5 +154,5 @@ public class ConfigController {
         } catch (IOException e) {
             throw new RuntimeException("Failed to reset configuration!", e);
         }
-    }
+    }*/
 }

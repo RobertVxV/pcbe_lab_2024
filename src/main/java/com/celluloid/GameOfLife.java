@@ -25,6 +25,7 @@ public class GameOfLife {
 
     @EventListener(ApplicationReadyEvent.class)
     public void startSimulation() {
+        System.out.println("We are starting the simulation!");
         eventQueue.startThread();
         cellRegister.startCellThreads();
     }
@@ -32,6 +33,11 @@ public class GameOfLife {
     public void endSimulation() {
         cellRegister.endCellThreads();
         eventQueue.endThread();
+    }
+
+    public void restartSimulation() {
+        endSimulation();
+        startSimulation();
     }
 
     public void addSexualCells(int count) {

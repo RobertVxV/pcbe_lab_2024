@@ -13,7 +13,7 @@ public class AsexualCell extends Cell {
             Config config,
             CellRegister cellRegister,
             boolean createdByUser) {
-        super(foodPool, eventQueue, config, cellRegister, createdByUser);
+        super(foodPool, eventQueue, config, cellRegister);
     }
 
     @Override
