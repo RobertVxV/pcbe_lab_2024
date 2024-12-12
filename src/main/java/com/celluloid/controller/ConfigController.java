@@ -13,16 +13,11 @@ import org.springframework.web.bind.annotation.*;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.Map;
-
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @Tag(name = "Configuration", description = "Endpoints for accessing application configuration")
@@ -44,7 +39,7 @@ public class ConfigController {
             description = "Returns the current application configuration settings."
     )
     public ResponseEntity<Config> getConfig() {
-        System.out.println("returnare config serializat");
+//        System.out.println("returnare config serializat");
         var headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         return new ResponseEntity<>(config, headers, HttpStatus.OK);
