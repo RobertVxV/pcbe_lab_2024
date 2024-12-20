@@ -6,9 +6,16 @@ import org.springframework.stereotype.Service;
 @Service
 public class FoodPool {
     private int totalFood;
+    private final Config config;
 
     @Autowired
     public FoodPool(Config config) {
+        this.config = config;
+
+        initialize();
+    }
+
+    public void initialize() {
         this.totalFood = config.getStartFood();
     }
 

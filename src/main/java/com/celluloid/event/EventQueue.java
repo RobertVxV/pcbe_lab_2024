@@ -20,6 +20,7 @@ public class EventQueue {
     }
 
     public void startThread() {
+        running = true;
         Thread thread = new Thread(this::run);
         thread.start();
     }
@@ -86,6 +87,12 @@ public class EventQueue {
             while (!queue.isEmpty() && deadCells.contains(queue.peek().targetCell())) {
                 queue.poll();
             }
+        }
+    }
+
+    public void clear() {
+        synchronized (this) {
+            queue.clear();
         }
     }
 }

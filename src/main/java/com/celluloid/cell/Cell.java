@@ -13,7 +13,7 @@ import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public abstract class Cell implements Runnable {
-    private static final AtomicInteger cellCounter = new AtomicInteger(0);
+    public static final AtomicInteger cellCounter = new AtomicInteger(0);
 
     protected final Config config;
     protected final EventQueue eventQueue;

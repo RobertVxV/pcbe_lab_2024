@@ -94,47 +94,15 @@ public class ConfigController {
             summary = "Reset configuration or update to new values",
             description = "If a JSON body is provided, updates the application configuration in memory. If no body is provided, resets the configuration to values read from application.yml and writes to application.yml."
     )
-    public Config resetConfig(@RequestBody(required = false) Config newConfig) {
-        if (newConfig != null) {
-            config.setStartFood(newConfig.getStartFood());
-            config.setAsexualCellsCount(newConfig.getAsexualCellsCount());
-            config.setSexualCellsCount(newConfig.getSexualCellsCount());
-            config.setReproductionThreshold(newConfig.getReproductionThreshold());
-            config.setTimeFull(newConfig.getTimeFull());
-            config.setTimeStarve(newConfig.getTimeStarve());
-            config.setTimeFullVariance(newConfig.getTimeFullVariance());
-            config.setFoodAmountAfterDeath(newConfig.getFoodAmountAfterDeath());
-
-            gameOfLife.endSimulation();
-            gameOfLife.startSimulation();
-
-            return newConfig;
-        } else {
-            return resetToDefaults();
+    public ResponseEntity<String> resetSimulation(){
+        try {
+            gameOfLife.restartSimulation();
+            return new ResponseEntity<>("Restarted simulation successfully!", HttpStatus.OK);
+        } catch (Exception e)
+        {
+            return new ResponseEntity<>("Failed to restart the simulation!", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
-    private Config resetToDefaults() {
-        Yaml yaml = new Yaml();
-        try (FileReader reader = new FileReader("src/main/resources/application.yml")) {
-            Map<String, Object> yamlData = yaml.load(reader);
-            Map<String, Object> gameOfLifeConfig = (Map<String, Object>) yamlData.get("gameoflife");
 
-            config.setAsexualCellsCount((Integer) gameOfLifeConfig.get("asexualCellsCount"));
-            config.setSexualCellsCount((Integer) gameOfLifeConfig.get("sexualCellsCount"));
-            config.setReproductionThreshold((Integer) gameOfLifeConfig.get("reproductionThreshold"));
-            config.setStartFood((Integer) gameOfLifeConfig.get("startFood"));
-            config.setTimeFull((Integer) gameOfLifeConfig.get("timeFull"));
-            config.setTimeStarve((Integer) gameOfLifeConfig.get("timeStarve"));
-            config.setTimeFullVariance((Integer) gameOfLifeConfig.get("timeFullVariance"));
-            config.setFoodAmountAfterDeath((Integer) gameOfLifeConfig.get("foodAmountAfterDeath"));
-
-            gameOfLife.endSimulation();
-            gameOfLife.startSimulation();
-
-            return config;
-        } catch (IOException e) {
-            throw new RuntimeException("Failed to reset configuration!", e);
-        }
-    }
 }

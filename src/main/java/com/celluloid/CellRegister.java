@@ -32,26 +32,40 @@ public class CellRegister {
         this.foodPool = foodPool;
         this.deadCells = deadCells;
 
-        for (int i = 0; i < config.getSexualCellsCount(); i++) {
-            addSexualCell();
-        }
-
-        for (int i = 0; i < config.getAsexualCellsCount(); i++) {
-            addAsexualCell();
-        }
+        initialize();
     }
 
-    public void startCellThreads() {
-        for (var cell : sexualCells) {
-            Thread thread = new Thread(cell);
-            thread.start();
+    public void initialize() {
+        Cell.cellCounter.set(0);
+
+        synchronized (sexualCells) {
+            sexualCells.clear();
+            for (int i = 0; i < config.getSexualCellsCount(); i++) {
+                addSexualCell();
+            }
         }
 
-        for (var cell : asexualCells) {
-            Thread thread = new Thread(cell);
-            thread.start();
+        synchronized (asexualCells) {
+            asexualCells.clear();
+            for (int i = 0; i < config.getAsexualCellsCount(); i++) {
+                addAsexualCell();
+            }
         }
+
+        deadCells.clear();
     }
+
+//    public void startCellThreads() {
+//        for (var cell : sexualCells) {
+//            Thread thread = new Thread(cell);
+//            thread.start();
+//        }
+//
+//        for (var cell : asexualCells) {
+//            Thread thread = new Thread(cell);
+//            thread.start();
+//        }
+//    }
 
     public void endCellThreads() {
         for (var cell : sexualCells) {
