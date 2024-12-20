@@ -29,4 +29,10 @@ public class DeadCellRegister {
             return deadCells.size();
         }
     }
+
+    public void clear() {
+        synchronized (deadCells) {
+            deadCells.clear();
+        }
+    }
 }

@@ -26,13 +26,13 @@ public class GameOfLife {
     @EventListener(ApplicationReadyEvent.class)
     public void startSimulation() {
         eventQueue.startThread();
-        cellRegister.startCellThreads();
     }
 
     public void endSimulation() {
         cellRegister.endCellThreads();
         eventQueue.endThread();
     }
+
 
     public void addSexualCells(int count) {
         for (int i = 0; i < count; i++) {
@@ -48,5 +48,17 @@ public class GameOfLife {
 
     public void addFoodUnits(int amount) {
         foodPool.addFood(amount);
+    }
+
+    public void restartSimulation() {
+        endSimulation();
+
+        foodPool.initialize();
+        eventQueue.clear();
+        eventQueue.startThread();
+        cellRegister.endCellThreads();
+        cellRegister.initialize();
+
+        startSimulation();
     }
 }
