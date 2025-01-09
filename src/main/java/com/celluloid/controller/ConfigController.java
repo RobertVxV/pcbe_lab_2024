@@ -77,6 +77,15 @@ public class ConfigController {
             // Write the updated YAML back to the file
             try (FileWriter writer = new FileWriter("src/main/resources/application.yml", false)) {
                 yaml.dump(yamlData, writer);
+                // Update the Config object in memory
+                config.setStartFood(newConfig.getStartFood());
+                config.setReproductionThreshold(newConfig.getReproductionThreshold());
+                config.setTimeFull(newConfig.getTimeFull());
+                config.setTimeStarve(newConfig.getTimeStarve());
+                config.setTimeFullVariance(newConfig.getTimeFullVariance());
+                config.setSexualCellsCount(newConfig.getSexualCellsCount());
+                config.setAsexualCellsCount(newConfig.getAsexualCellsCount());
+                config.setFoodAmountAfterDeath(newConfig.getFoodAmountAfterDeath());
                 return new ResponseEntity<>("Configuration updated!", HttpStatus.OK);
             }
         } catch (IOException e) {
