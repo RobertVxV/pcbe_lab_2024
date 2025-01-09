@@ -32,15 +32,16 @@ const ConfigForm = () => {
 
     const handleSubmit = (e, endpoint) => {
         e.preventDefault();
+        const action = endpoint === '' ? 'Save' : 'Update';
         axios.post(`http://localhost:8080/config${endpoint}`, config)
             .then(() => {
                 setMessage({
-                    text: 'Configuration updated successfully!',
+                    text: `Configuration ${action} successfully!`,
                     type: 'success'
                 });
             })
             .catch(error => setMessage({
-                text: `Error: ${error.response?.data || 'Request failed'}`,
+                text: `Error during ${action.toLowerCase()} configuration: ${error.response?.data || 'Request failed'}`,
                 type: 'error'
             }));
     };
