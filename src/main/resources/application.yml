@@ -1,6 +1,6 @@
 gameoflife:
-  sexualCellsCount: 2
-  asexualCellsCount: 1
+  sexualCellsCount: 3
+  asexualCellsCount: 5
   reproductionThreshold: 4
   startFood: 200
   timeStarve: 2000
