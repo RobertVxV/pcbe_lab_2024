@@ -1,10 +1,28 @@
-### This repository will be used for the PCBE Project.
+# This repository will be used for the PCBE Project.
+
+## USAGE
+
+### First setup:
+- clone repository
+- install **Intelij IDEA** to run the java application (backend)
+- install **NodeJS** for npm (frontend)
+- run `npm install` inside frontend folder at ./frontend/ to get dependencies
+
+### After first setup:
+- run `npm start` inside frontend folder at ./frontend/ to start frontend
+- start `Application.java` inside IDEA.
+
+### Where to find the pages:
+- user API is found at: `localhost:3000`
+- admin API is found at: `localhost:3000/settings`
+- swagger UI is found at: `localhost:8080/swagger-ui/index.html`
+
+## ABOUT
 
 ### Jocul vietii
-
 Simulati o populatie de celule vii ce au fiecare ca scop hranirea si inmultirea.
 
-Exista un numar limitat de unitati de hrana (resurse) pe care celulele le consuma. O unitate de hrana ii ajunge unei celule un timp dat T_full dupa care i se face foame. Daca nu maninca un alt timp dat T_starve, celula moare rezultind un numar aleator intre 1 si 5 de unitati de hrana.
+Exista un numar limitat de unitati de hrana (resurse) pe care celulele le consuma. O unitate de hrana ii ajunge unei celule un timp dat T_full dupa care i se face foame. Daca nu mananca un alt timp dat T_starve, celula moare rezultind un numar aleator intre 1 si 5 de unitati de hrana.
 
 Dupa ce a mincat de minim 10 ori, o celula se va inmulti inainte sa i se faca din nou foame. Exista doua tipuri de celule: sexuate si asexuate. Celulele asexuate se inmultesc prin diviziune, rezultind doua celule flaminde.
 
